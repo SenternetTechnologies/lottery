@@ -3,36 +3,374 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cansing Lottery</title>
-    <!-- Tailwind CSS CDN for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter for a clean look -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Birthday Special Game Event</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Ensure HTML and Body take full viewport height and width */
-        html, body {
-            height: 100%;
-            width: 100%;
-            margin: 0; /* Remove default body margin */
-            padding: 0; /* Remove default body padding */
-            overflow: hidden; /* Hide scrollbars on the main HTML page */
-            font-family: 'Inter', sans-serif; /* Apply Inter font */
+        /* General Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #71b7e6, #9b59b6);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
         }
-        /* Style the iframe to fill its parent container (body) */
-        iframe {
-            display: block; /* Remove extra space below iframe */
-            border: none; /* Remove default iframe border */
-            width: 100%; /* Make iframe take full width */
-            height: 100%; /* Make iframe take full height */
-            /* Scrollbars for the iframe content will appear automatically if content overflows */
+
+        /* Main Container */
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 25px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: #6c4caf;
+            margin-bottom: 20px;
+        }
+
+        /* Announcement Bar */
+        .announcement-bar {
+            background-color: #6c4caf;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* Form and Game Sections */
+        .section {
+            margin-top: 20px;
+        }
+
+        #game-section {
+            display: none; /* Hidden by default */
+        }
+
+        /* Input Fields */
+        .input-field {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, #9b59b6, #71b7e6);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Game Display */
+        #number-display {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .number-box {
+            width: 80px;
+            height: 80px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            font-weight: 700;
+            color: #333;
+            border: 2px solid #ddd;
+            transition: transform 0.5s ease-out;
+        }
+
+        /* Game Info */
+        #game-info p {
+            font-size: 18px;
+            margin: 8px 0;
+        }
+        #game-info #coins {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        #game-info #spins-left {
+            color: #c0392b;
+            font-weight: bold;
+        }
+
+        /* Message/Status Box */
+        #status-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none; /* Hidden by default */
+        }
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .status-info {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 30px;
+            color: #555;
+            font-size: 14px;
         }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center">
-    <!-- The iframe element to embed the Google Apps Script link -->
-    <iframe
-        src="https://script.google.com/macros/s/AKfycbzdLL7Tf9FQkJwyMfLzIbtbWZx-u0ROtZJQNqVGzunptGxvnfVb0X4rofmswi2NcxPxzg/exec"
-        title="Starmaker Cansing Lottery Game">
-    </iframe>
+<body>
+
+    <div class="container">
+        <!-- Running Announcement Bar -->
+        <div class="announcement-bar">
+            <marquee id="announcement-text">Welcome to the Birthday Special Game Event! Good luck!</marquee>
+        </div>
+
+        <h1>Birthday Special Game Event</h1>
+
+        <!-- Registration Section -->
+        <div id="register-section" class="section">
+            <h2>Join the Game</h2>
+            <form id="register-form">
+                <input type="text" id="name" class="input-field" placeholder="Enter Your Name" required>
+                <button type="submit" id="register-btn" class="btn">Register & Play</button>
+            </form>
+        </div>
+
+        <!-- Game Section -->
+        <div id="game-section" class="section">
+            <h2 id="welcome-message">Welcome, Player!</h2>
+            <p><b>If the three numbers Addition value n≤25 your are the winner.</b></p>
+            <div id="number-display">
+                <div class="number-box">?</div>
+                <div class="number-box">?</div>
+                <div class="number-box">?</div>
+            </div>
+
+            <div id="game-info">
+                <p>Total Coins: <span id="coins">0</span></p>
+                <p>Spins Left Today: <span id="spins-left">3</span></p>
+            </div>
+            
+            <button id="spin-btn" class="btn">Spin the Numbers!</button>
+        </div>
+
+        <!-- Status Message Box -->
+        <div id="status-message"></div>
+<B>Send this screenshot to Admin Eyekiller to get coins.</B>
+        <!-- Footer -->
+        <footer>
+            <p>cansing tamil family created event of lucky birthday give away.</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM Elements
+        const registerSection = document.getElementById('register-section');
+        const gameSection = document.getElementById('game-section');
+        const registerForm = document.getElementById('register-form');
+        const nameInput = document.getElementById('name');
+        const spinBtn = document.getElementById('spin-btn');
+        const numberBoxes = document.querySelectorAll('.number-box');
+        const coinsDisplay = document.getElementById('coins');
+        const spinsLeftDisplay = document.getElementById('spins-left');
+        const welcomeMessage = document.getElementById('welcome-message');
+        const statusMessage = document.getElementById('status-message');
+        const announcementText = document.getElementById('announcement-text');
+
+        // Game State Variables
+        let playerState = null;
+        const LOCAL_STORAGE_KEY = 'birthdayGameState';
+        const REGISTERED_USERS_KEY = 'birthdayGameRegisteredUsers';
+
+        // Helper function to get registered users from localStorage
+        function getRegisteredUsers() {
+            const users = localStorage.getItem(REGISTERED_USERS_KEY);
+            return users ? JSON.parse(users) : [];
+        }
+
+        // On Page Load: Check for existing player data in localStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedState = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+            if (savedState && savedState.name) {
+                playerState = savedState;
+                const today = new Date().toISOString().split('T')[0];
+                if (playerState.lastSpinDate !== today) {
+                    playerState.spinsToday = 0;
+                    playerState.hasWonToday = false;
+                    saveState();
+                }
+                showGameSection();
+            }
+        });
+
+        // Function to show a status message
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-${type}`;
+            statusMessage.style.display = 'block';
+        }
+
+        // Handle Registration Form Submission
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = nameInput.value.trim().toLowerCase(); // Use lowercase for case-insensitive check
+            if (!name) {
+                showStatus('Please enter a valid name.', 'error');
+                return;
+            }
+
+            const registeredUsers = getRegisteredUsers();
+            if (registeredUsers.includes(name)) {
+                showStatus('Don\'t create multiple accounts! This name is already registered.', 'error');
+                // As a convenience, load the game for the existing user
+                const savedState = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+                if (savedState && savedState.name.toLowerCase() === name) {
+                     playerState = savedState;
+                     setTimeout(showGameSection, 2000);
+                }
+                return;
+            }
+
+            // Register the new user
+            registeredUsers.push(name);
+            localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(registeredUsers));
+
+            // Create a new state for the player
+            playerState = {
+                name: nameInput.value.trim(), // Keep original casing for display
+                coins: 0,
+                spinsToday: 0,
+                lastSpinDate: '',
+                hasWonToday: false
+            };
+            saveState();
+
+            showStatus('Registration successful! Welcome.', 'success');
+            setTimeout(showGameSection, 1500);
+        });
+
+        // Handle Spin Button Click
+        spinBtn.addEventListener('click', () => {
+            if (playerState.spinsToday >= 3) {
+                showStatus("You've used all your spins for today!", 'info');
+                return;
+            }
+            if (playerState.hasWonToday) {
+                showStatus("You've already won today! Come back tomorrow.", 'info');
+                return;
+            }
+
+            // Update spin count
+            playerState.spinsToday++;
+            playerState.lastSpinDate = new Date().toISOString().split('T')[0];
+
+            // Generate three random numbers between 1 and 10
+            const numbers = [
+                Math.floor(Math.random() * 10) + 1,
+                Math.floor(Math.random() * 10) + 1,
+                Math.floor(Math.random() * 10) + 1
+            ];
+
+            // Display the numbers with an animation
+            numberBoxes.forEach((box, index) => {
+                box.style.transform = 'rotateX(360deg)';
+                setTimeout(() => {
+                    box.textContent = numbers[index];
+                    box.style.transform = 'none';
+                }, 500);
+            });
+            
+            const sum = numbers.reduce((a, b) => a + b, 0);
+
+            // Check for win condition after animation
+            setTimeout(() => {
+                if (sum >= 25) {
+                    playerState.coins += 44;
+                    playerState.hasWonToday = true;
+                    showStatus(`Congratulations! You won 44 coins! Total sum was ${sum}.`, 'success');
+                    announcementText.textContent = `${playerState.name} just won 40 coins! 🎉`;
+                } else {
+                    showStatus(`So close! Your sum was ${sum}. Spin again!`, 'info');
+                }
+                updateUI();
+                saveState();
+            }, 600);
+        });
+        
+        // Function to show the game section and hide registration
+        function showGameSection() {
+            registerSection.style.display = 'none';
+            statusMessage.style.display = 'none';
+            gameSection.style.display = 'block';
+            welcomeMessage.textContent = `Welcome, ${playerState.name}!`;
+            updateUI();
+        }
+
+        // Function to update the UI with current state
+        function updateUI() {
+            coinsDisplay.textContent = playerState.coins;
+            const spinsRemaining = 3 - playerState.spinsToday;
+            spinsLeftDisplay.textContent = spinsRemaining;
+
+            // Disable button if no spins left or already won
+            if (spinsRemaining <= 0 || playerState.hasWonToday) {
+                spinBtn.disabled = true;
+                if(playerState.hasWonToday){
+                    spinsLeftDisplay.textContent = "You've won!";
+                } else {
+                    spinsLeftDisplay.textContent = "No spins left";
+                }
+            } else {
+                spinBtn.disabled = false;
+            }
+        }
+
+        // Function to save the current player state to localStorage
+        function saveState() {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(playerState));
+        }
+
+    </script>
 </body>
 </html>
