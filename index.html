@@ -3,656 +3,460 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cansing Family - Birthday Game</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Star Treasure</title>
     <style>
+        /* --- Basic Setup & Fonts --- */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        :root {
+            --bg-color: #1a0f35;
+            --primary-glow: #ff8c00;
+            --secondary-glow: #e040fb;
+            --text-color: #ffffff;
+            --panel-bg: rgba(45, 25, 80, 0.5);
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 70%),
+                              url('https://www.transparenttextures.com/patterns/stardust.png');
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        /* Page transition animation */
-        .page {
-            animation: fadeIn 0.5s ease-in-out;
+
+        .game-container {
+            width: 100%;
+            max-width: 450px;
+            background: linear-gradient(180deg, #3a1c71 0%, #2c1550 100%);
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            box-sizing: border-box;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        /* --- Header --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
-        /* Number box spin animation */
-        .number-box-spin {
-            transform: rotateX(360deg);
-            transition: transform 0.5s ease-out;
+        .round-info {
+            font-size: 1.1em;
+            font-weight: 600;
         }
-        /* Custom gradient for buttons and highlights */
-        .brand-gradient {
-            background: linear-gradient(135deg, #8e2de2, #4a00e0);
+        .winners-bar {
+            font-size: 0.8em;
+            opacity: 0.8;
         }
-        .brand-gradient-rev {
-            background: linear-gradient(135deg, #4a00e0, #8e2de2);
+
+        /* --- Game Wheel --- */
+        .game-wheel-container {
+            position: relative;
+            width: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio */
+            margin: 40px 0;
         }
-        /* Modal styles */
-        .modal-backdrop {
-            transition: opacity 0.3s ease;
+
+        .game-wheel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: rotate-bg 20s linear infinite;
+            background: url('https://i.imgur.com/uG9A9Q8.png') center/cover; /* Black hole image */
         }
-        .modal-content {
-            transition: transform 0.3s ease;
+        
+        @keyframes rotate-bg {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .planet {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 0.7em;
+            font-weight: 600;
+        }
+
+        .planet-img {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 2px;
+        }
+        
+        .planet.selected {
+            transform: scale(1.3);
+            box-shadow: 0 0 25px 5px var(--primary-glow);
+            z-index: 10;
+        }
+        
+        .planet.hot::after {
+            content: 'HOT';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: red;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 5px;
+            font-size: 0.8em;
+        }
+
+        /* --- Central Display --- */
+        .central-display {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background-color: rgba(0,0,0,0.3);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid var(--secondary-glow);
+            box-shadow: 0 0 20px var(--secondary-glow) inset, 0 0 20px var(--secondary-glow);
+            text-align: center;
+        }
+
+        .central-display .timer-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .central-display .timer {
+            font-size: 2.5em;
+            font-weight: 700;
+            line-height: 1.1;
+            text-shadow: 0 0 10px var(--text-color);
+        }
+
+        /* --- Controls & Betting --- */
+        .bet-button {
+            width: 100%;
+            padding: 15px;
+            border-radius: 50px;
+            border: none;
+            background: linear-gradient(90deg, #ff8c00, #ff5f6d);
+            color: var(--text-color);
+            font-size: 1.4em;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 140, 0, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-transform: uppercase;
+            margin-top: 20px;
+        }
+
+        .bet-button:disabled {
+            background: #555;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .bet-button:not(:disabled):hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 140, 0, 0.6);
+        }
+
+        .bet-amount-section {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .bet-amount-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        .bet-control-btn {
+            background: var(--panel-bg);
+            border: 1px solid var(--secondary-glow);
+            color: var(--text-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        #current-bet-amount {
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+        
+        /* --- Account Info --- */
+        .account-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: var(--panel-bg);
+            border-radius: 10px;
+        }
+        
+        .info-box {
+            flex: 1;
+            text-align: center;
+        }
+
+        .info-box .label {
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+        
+        .info-box .value {
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        
+        #account-balance::before, #today-bonus::before, #current-bet-amount::before {
+            content: '💰';
+            margin-right: 5px;
+            font-size: 0.8em;
+        }
+
+        /* --- Footer --- */
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: linear-gradient(90deg, #ff8c00, #e040fb);
+            border-radius: 10px;
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">
+<body>
 
-    <div id="app-container" class="w-full max-w-md mx-auto bg-gray-800 rounded-2xl shadow-2xl shadow-purple-500/20 overflow-hidden">
-        
-        <!-- Loading Spinner -->
-        <div id="loading-spinner" class="hidden p-8 flex flex-col items-center justify-center">
-            <svg class="animate-spin h-10 w-10 text-purple-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <p class="mt-4 text-gray-300">Connecting to Server...</p>
-        </div>
-
-        <!-- Login Page -->
-        <div id="login-page" class="page p-8 space-y-6">
-            <div class="text-center">
-                <h1 class="text-3xl font-bold text-purple-400">Welcome!</h1>
-                <p class="text-gray-400 mt-2">Join the Cansing Birthday Event</p>
-            </div>
-            <div class="space-y-4">
-                <button id="guest-login-btn" class="w-full brand-gradient text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 transition-opacity shadow-lg shadow-purple-500/30">
-                    Cansing Guest Entry (20 Bonus Coins!)
-                </button>
-                 <div class="relative flex py-3 items-center">
-                    <div class="flex-grow border-t border-gray-600"></div>
-                    <span class="flex-shrink mx-4 text-gray-500">Or</span>
-                    <div class="flex-grow border-t border-gray-600"></div>
-                </div>
-                <input type="text" id="username-input" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Enter Username or Starmaker ID">
-                <button id="username-login-btn" class="w-full bg-gray-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-500 transition-colors">Login / Register</button>
-            </div>
-        </div>
-
-        <!-- Main App Interface (post-login) -->
-        <div id="main-app" class="hidden">
-            <!-- Header -->
-            <header class="p-4 bg-gray-900/50 flex justify-between items-center">
-                <div>
-                    <p class="text-sm text-gray-400">Welcome</p>
-                    <h2 id="user-display-name" class="font-bold text-lg"></h2>
-                </div>
-                <div class="text-right">
-                    <p class="text-sm text-yellow-400">CS Coins</p>
-                    <p id="wallet-coins" class="font-bold text-lg"></p>
-                </div>
-            </header>
-
-            <!-- Game Page -->
-            <div id="game-page" class="page p-6">
-                <div class="announcement-bar bg-purple-500/20 text-purple-300 p-3 rounded-lg mb-6 text-center text-sm">
-                    <marquee id="announcement-text">Try your luck! Win big! Good luck to everyone!</marquee>
-                </div>
-
-                <div class="text-center mb-6">
-                     <p class="text-gray-300">Spin and get a sum of <b>21 or less</b> to win 3-14 coins.</p>
-                     <p class="text-yellow-300 font-bold">Get a sum of <b>25 or more</b> to win the 44 coin JACKPOT!</p>
-                </div>
-
-                <div id="number-display" class="flex justify-center gap-4 my-8">
-                    <div class="number-box w-20 h-20 bg-gray-900 rounded-lg flex items-center justify-center text-4xl font-bold border-2 border-gray-700">?</div>
-                    <div class="number-box w-20 h-20 bg-gray-900 rounded-lg flex items-center justify-center text-4xl font-bold border-2 border-gray-700">?</div>
-                    <div class="number-box w-20 h-20 bg-gray-900 rounded-lg flex items-center justify-center text-4xl font-bold border-2 border-gray-700">?</div>
-                </div>
-
-                <div class="text-center my-6 space-y-2">
-                    <p class="text-gray-300">Spins Left: <span id="spins-left" class="font-bold text-xl text-white"></span></p>
-                </div>
-                
-                <div class="space-y-4">
-                    <button id="spin-btn" class="w-full brand-gradient text-white font-bold py-4 px-4 rounded-lg text-xl hover:opacity-90 transition-opacity shadow-lg shadow-purple-500/40 disabled:opacity-50 disabled:cursor-not-allowed">Spin Now!</button>
-                    <button id="buy-spins-btn" class="w-full bg-teal-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-400 transition-colors">Buy 2 Spins (10 Coins)</button>
-                </div>
-            </div>
-
-            <!-- Profile Page -->
-            <div id="profile-page" class="page hidden p-6 space-y-6">
-                 <div>
-                    <h3 class="text-xl font-bold text-purple-300 mb-4">My Profile</h3>
-                    <div class="bg-gray-700/50 p-4 rounded-lg space-y-2">
-                        <p><strong>Username:</strong> <span id="profile-username"></span></p>
-                        <p><strong>Member Since:</strong> <span id="profile-created-date"></span></p>
-                    </div>
-                </div>
-
-                 <div>
-                    <h3 class="text-xl font-bold text-purple-300 mb-2">Change Name</h3>
-                    <div class="flex gap-2">
-                        <input type="text" id="change-name-input" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="New display name">
-                        <button id="change-name-btn" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-500 transition-colors">Save</button>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 class="text-xl font-bold text-yellow-300 mb-4">CS Coin Wallet</h3>
-                    <div class="bg-gray-700/50 p-4 rounded-lg">
-                        <p class="text-center text-sm mb-1 text-gray-400">Convert CS Coins to Starmaker Coins</p>
-                        <p class="text-center text-xs mb-4 text-gray-500">(3 CS Coins = 1 Starmaker Coin)</p>
-                        <input type="text" id="sm-id-input" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 mb-2 text-white" placeholder="Your Starmaker ID">
-                        <input type="number" id="cs-convert-input" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 mb-2 text-white" placeholder="CS Coins to convert">
-                        <p class="text-center my-2">You will get: <span id="sm-receive-display" class="font-bold text-xl text-green-400">0</span> Starmaker Coins</p>
-                        <p id="recharge-rule" class="text-center text-xs text-red-400 mb-3 hidden">You can only recharge up to 44 Starmaker Coins at a time.</p>
-                        <button id="recharge-btn" class="w-full brand-gradient-rev text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">Submit Recharge</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Admin Page -->
-            <div id="admin-page" class="page hidden p-6 space-y-6">
-                <h3 class="text-xl font-bold text-red-400">Admin Panel</h3>
-                 <div>
-                    <h4 class="text-lg font-semibold mb-2">Grant Free Spins</h4>
-                    <input type="text" id="admin-target-user-input" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 mb-2 text-white" placeholder="Target Username or ID">
-                    <input type="number" id="admin-spins-input" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 mb-2 text-white" placeholder="Number of Spins to grant">
-                    <button id="admin-grant-spins-btn" class="w-full bg-red-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-500 transition-colors">Grant Spins</button>
-                </div>
-            </div>
-
-            <!-- Navigation Bar -->
-            <nav class="bg-gray-900 grid grid-cols-3 text-center border-t-2 border-purple-500/30">
-                <button data-page="game-page" class="nav-btn p-4 text-purple-400 border-t-2 border-purple-400">Lottery</button>
-                <button data-page="profile-page" class="nav-btn p-4 text-gray-400 border-t-2 border-transparent">Profile</button>
-                <button data-page="admin-page" id="admin-nav-btn" class="nav-btn p-4 text-gray-400 border-t-2 border-transparent hidden">Admin</button>
-            </nav>
-        </div>
-
+<div class="game-container">
+    <div class="header">
+        <div class="round-info">Today's <span id="round-number">1725</span> Round</div>
+        <div class="winners-bar">🏆 961 ▶</div>
     </div>
 
-    <!-- Generic Modal -->
-    <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4 modal-backdrop">
-        <div class="modal-content bg-gray-800 rounded-2xl shadow-lg p-6 w-full max-w-sm text-center transform scale-95">
-            <h3 id="modal-title" class="text-xl font-bold mb-2"></h3>
-            <p id="modal-body" class="text-gray-300 mb-6"></p>
-            <button id="modal-close-btn" class="bg-purple-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-purple-500 transition-colors">OK</button>
+    <div class="game-wheel-container">
+        <div class="game-wheel">
+            </div>
+        <div class="central-display">
+            <div class="timer-label">Next Round</div>
+            <div class="timer" id="timer">21</div>
         </div>
     </div>
 
+    <button class="bet-button" id="bet-button">One-Click Bet</button>
 
-    <script>
-    // =================================================================================
-    // CONFIGURATION
-    // =================================================================================
-    const SHEET_ID = '1ysrqo1gApsEL2QsJjvVdbusS0x26oEwzKC0HMzoDoMI';
-    // IMPORTANT: To WRITE data, you must create a Google Form and get its action URL.
-    // Replace 'YOUR_FORM_ACTION_URL' with the real URL from your Google Form.
-    // See the setup guide for instructions.
-    const FORM_ACTION_URL = 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse';
+    <div class="bet-amount-section">
+        <div>Current Bet Amount</div>
+        <div class="bet-amount-controls">
+            <button class="bet-control-btn" id="decrease-bet">-</button>
+            <span id="current-bet-amount">10</span>
+            <button class="bet-control-btn" id="increase-bet">+</button>
+        </div>
+    </div>
 
-    const ENTRY_IDS = {
-        // These MUST match the "entry.xxxx" IDs from your Google Form's pre-filled link
-        userID: 'entry.xxxxxxxxxx',
-        displayName: 'entry.xxxxxxxxxx',
-        coins: 'entry.xxxxxxxxxx',
-        createdDate: 'entry.xxxxxxxxxx',
-        lastSpinDate: 'entry.xxxxxxxxxx',
-        spinsToday: 'entry.xxxxxxxxxx',
-        isAdmin: 'entry.xxxxxxxxxx',
-        // For the other sheets/forms
-        rechargeRequest: 'entry.xxxxxxxxxx', 
-        adminAction: 'entry.xxxxxxxxxx',
-    };
+    <div class="account-info">
+        <div class="info-box">
+            <div class="label">Account Balance</div>
+            <div class="value" id="account-balance">1000</div>
+        </div>
+        <div class="info-box">
+            <div class="label">Today's Bonus</div>
+            <div class="value" id="today-bonus">0</div>
+        </div>
+    </div>
 
+    <div class="footer">
+        The Biggest Winner
+    </div>
+</div>
 
-    // =================================================================================
-    // DOM ELEMENTS
-    // =================================================================================
-    const elements = {
-        loadingSpinner: document.getElementById('loading-spinner'),
-        loginPage: document.getElementById('login-page'),
-        mainApp: document.getElementById('main-app'),
-        guestLoginBtn: document.getElementById('guest-login-btn'),
-        usernameInput: document.getElementById('username-input'),
-        usernameLoginBtn: document.getElementById('username-login-btn'),
-        userDisplayName: document.getElementById('user-display-name'),
-        walletCoins: document.getElementById('wallet-coins'),
-        numberBoxes: document.querySelectorAll('.number-box'),
-        spinBtn: document.getElementById('spin-btn'),
-        spinsLeft: document.getElementById('spins-left'),
-        buySpinsBtn: document.getElementById('buy-spins-btn'),
-        navBtns: document.querySelectorAll('.nav-btn'),
-        pages: document.querySelectorAll('.page'),
-        announcementText: document.getElementById('announcement-text'),
-        // Profile Page
-        profileUsername: document.getElementById('profile-username'),
-        profileCreatedDate: document.getElementById('profile-created-date'),
-        changeNameInput: document.getElementById('change-name-input'),
-        changeNameBtn: document.getElementById('change-name-btn'),
-        smIdInput: document.getElementById('sm-id-input'),
-        csConvertInput: document.getElementById('cs-convert-input'),
-        smReceiveDisplay: document.getElementById('sm-receive-display'),
-        rechargeRule: document.getElementById('recharge-rule'),
-        rechargeBtn: document.getElementById('recharge-btn'),
-        // Admin Page
-        adminNavBtn: document.getElementById('admin-nav-btn'),
-        adminTargetUserInput: document.getElementById('admin-target-user-input'),
-        adminSpinsInput: document.getElementById('admin-spins-input'),
-        adminGrantSpinsBtn: document.getElementById('admin-grant-spins-btn'),
-        // Modal
-        modal: document.getElementById('modal'),
-        modalTitle: document.getElementById('modal-title'),
-        modalBody: document.getElementById('modal-body'),
-        modalCloseBtn: document.getElementById('modal-close-btn'),
-    };
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const gameWheel = document.querySelector('.game-wheel');
+        const timerEl = document.getElementById('timer');
+        const betButton = document.getElementById('bet-button');
+        const roundNumberEl = document.getElementById('round-number');
+        const balanceEl = document.getElementById('account-balance');
+        const bonusEl = document.getElementById('today-bonus');
+        const currentBetEl = document.getElementById('current-bet-amount');
+        const increaseBetBtn = document.getElementById('increase-bet');
+        const decreaseBetBtn = document.getElementById('decrease-bet');
 
-    // =================================================================================
-    // APPLICATION STATE
-    // =================================================================================
-    let state = {
-        currentUser: null,
-        allUsers: [],
-        isLoading: true,
-    };
-
-    // =================================================================================
-    // UTILITY & HELPER FUNCTIONS
-    // =================================================================================
-
-    // Show a modal notification
-    function showModal(title, message) {
-        elements.modalTitle.textContent = title;
-        elements.modalBody.innerHTML = message; // Use innerHTML to allow for bold tags etc.
-        elements.modal.classList.remove('hidden');
-        setTimeout(() => {
-            elements.modal.querySelector('.modal-backdrop').classList.remove('opacity-0');
-            elements.modal.querySelector('.modal-content').classList.remove('scale-95');
-        }, 10);
-    }
-
-    // Hide the modal
-    function hideModal() {
-        elements.modal.querySelector('.modal-backdrop').classList.add('opacity-0');
-        elements.modal.querySelector('.modal-content').classList.add('scale-95');
-        setTimeout(() => elements.modal.classList.add('hidden'), 300);
-    }
-    
-    // Parse CSV data from Google Sheets
-    function parseCSV(csvText) {
-        const rows = csvText.trim().split('\n').map(row => row.replace(/"/g, ''));
-        const headers = rows.shift().split(',');
-        return rows.map(row => {
-            const values = row.split(',');
-            return headers.reduce((obj, header, i) => {
-                obj[header.trim()] = values[i] ? values[i].trim() : '';
-                return obj;
-            }, {});
-        });
-    }
-
-    // Get today's date in YYYY-MM-DD format
-    function getTodayDateString() {
-        return new Date().toISOString().split('T')[0];
-    }
-    
-    // =================================================================================
-    // DATA HANDLING (GOOGLE SHEETS)
-    // =================================================================================
-
-    // Fetch all user data from the published Google Sheet
-    async function fetchAllUsers() {
-        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Users`;
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Network response was not ok.');
-            const csvText = await response.text();
-            state.allUsers = parseCSV(csvText);
-            console.log('Users data loaded:', state.allUsers);
-        } catch (error) {
-            console.error('Failed to fetch user data:', error);
-            showModal('Connection Error', 'Could not load data from the server. Please check your connection and try again.');
-        }
-    }
-    
-    // This function simulates writing data. In a real scenario, it would post to a Google Form.
-    // It's crucial to set up the Google Form correctly for this to work.
-    async function saveData(dataObject, formActionUrl, entryMapping) {
-        // THIS IS A CRITICAL PART: Replace 'YOUR_FORM_ACTION_URL' in the config
-        if (formActionUrl.includes('YOUR_FORM_ID')) {
-            console.warn("Writing to sheet is disabled. Please configure FORM_ACTION_URL and ENTRY_IDS in the script.");
-            // For demo purposes, we update the local state. In a real multi-user env, this isn't enough.
-            const userIndex = state.allUsers.findIndex(u => u.UserID === dataObject.UserID);
-            if(userIndex > -1) {
-                state.allUsers[userIndex] = { ...state.allUsers[userIndex], ...dataObject };
-            } else {
-                 state.allUsers.push(dataObject);
-            }
-            state.currentUser = dataObject; // Update current user state
-            updateUI();
-            return;
-        }
-
-        const formData = new FormData();
-        for (const key in entryMapping) {
-            if (dataObject[key] !== undefined) {
-                formData.append(entryMapping[key], dataObject[key]);
-            }
-        }
-
-        try {
-            await fetch(formActionUrl, {
-                method: 'POST',
-                mode: 'no-cors', // Important for Google Forms
-                body: formData,
-            });
-            console.log('Data submitted successfully.');
-            // Refetch data to confirm the write was successful
-             await fetchAllUsers();
-             state.currentUser = state.allUsers.find(u => u.UserID === dataObject.UserID);
-             updateUI();
-
-        } catch (error) {
-            console.error('Failed to submit data:', error);
-            showModal('Save Error', 'Could not save your progress. Please try again.');
-        }
-    }
-
-
-    // =================================================================================
-    // UI & PAGE MANAGEMENT
-    // =================================================================================
-
-    // Update the entire UI based on the current state
-    function updateUI() {
-        if (!state.currentUser) return;
-        
-        // Header
-        elements.userDisplayName.textContent = state.currentUser.DisplayName;
-        elements.walletCoins.textContent = state.currentUser.Coins;
-
-        // Game Page
-        const spinsRemaining = 3 - state.currentUser.SpinsToday;
-        elements.spinsLeft.textContent = spinsRemaining > 0 ? spinsRemaining : '0';
-        elements.spinBtn.disabled = spinsRemaining <= 0 || state.currentUser.hasWonJackpotToday;
-
-        // Profile Page
-        elements.profileUsername.textContent = state.currentUser.UserID;
-        elements.profileCreatedDate.textContent = new Date(state.currentUser.CreatedDate).toLocaleDateString();
-        elements.changeNameInput.value = state.currentUser.DisplayName;
-
-        // Admin Nav
-        if (String(state.currentUser.IsAdmin).toUpperCase() === 'TRUE') {
-            elements.adminNavBtn.classList.remove('hidden');
-        } else {
-            elements.adminNavBtn.classList.add('hidden');
-        }
-    }
-    
-    // Switch between pages
-    function navigateTo(pageId) {
-        elements.pages.forEach(page => {
-            page.classList.add('hidden');
-        });
-        document.getElementById(pageId).classList.remove('hidden');
-
-        elements.navBtns.forEach(btn => {
-            if (btn.dataset.page === pageId) {
-                btn.classList.add('text-purple-400', 'border-purple-400');
-                btn.classList.remove('text-gray-400', 'border-transparent');
-            } else {
-                btn.classList.add('text-gray-400', 'border-transparent');
-                btn.classList.remove('text-purple-400', 'border-purple-400');
-            }
-        });
-    }
-
-
-    // =================================================================================
-    // USER & AUTHENTICATION LOGIC
-    // =================================================================================
-    
-    function loginUser(userID) {
-        let user = state.allUsers.find(u => u.UserID.toLowerCase() === userID.toLowerCase());
-        
-        if (user) {
-            // Existing user
-            state.currentUser = { ...user, Coins: Number(user.Coins), SpinsToday: Number(user.SpinsToday) };
-            // Reset daily spins if it's a new day
-            if (state.currentUser.LastSpinDate !== getTodayDateString()) {
-                state.currentUser.SpinsToday = 0;
-                state.currentUser.hasWonJackpotToday = false;
-            }
-        } else {
-            // New user registration
-            state.currentUser = {
-                UserID: userID,
-                DisplayName: userID,
-                Coins: 0,
-                CreatedDate: new Date().toISOString(),
-                LastSpinDate: '',
-                SpinsToday: 0,
-                IsAdmin: 'FALSE',
-                hasWonJackpotToday: false
-            };
-            showModal('Welcome!', `You've been registered as <b>${userID}</b>.`);
-            saveUserData(); // Save the new user to the sheet
-        }
-        
-        localStorage.setItem('birthdayGameUserID', state.currentUser.UserID);
-        elements.loginPage.classList.add('hidden');
-        elements.mainApp.classList.remove('hidden');
-        updateUI();
-        navigateTo('game-page');
-    }
-
-    function handleGuestLogin() {
-        const guestID = `CS${Math.floor(1000 + Math.random() * 9000)}`;
-        let user = state.allUsers.find(u => u.UserID.toLowerCase() === guestID.toLowerCase());
-
-        // If guestID already exists (unlikely but possible), generate a new one
-        while(user) {
-            guestID = `CS${Math.floor(1000 + Math.random() * 9000)}`;
-            user = state.allUsers.find(u => u.UserID.toLowerCase() === guestID.toLowerCase());
-        }
-
-        // Create new guest user with bonus coins
-        state.currentUser = {
-            UserID: guestID,
-            DisplayName: guestID,
-            Coins: 20, // Welcome bonus
-            CreatedDate: new Date().toISOString(),
-            LastSpinDate: '',
-            SpinsToday: 0,
-            IsAdmin: 'FALSE',
-            hasWonJackpotToday: false
-        };
-        
-        saveUserData(); // Save the new guest user
-        
-        localStorage.setItem('birthdayGameUserID', state.currentUser.UserID);
-        showModal('Welcome Guest!', `You are logged in as <b>${guestID}</b> and received 20 bonus coins!`);
-        elements.loginPage.classList.add('hidden');
-        elements.mainApp.classList.remove('hidden');
-        updateUI();
-        navigateTo('game-page');
-    }
-
-    function saveUserData() {
-        const userData = {
-            UserID: state.currentUser.UserID,
-            DisplayName: state.currentUser.DisplayName,
-            Coins: state.currentUser.Coins,
-            CreatedDate: state.currentUser.CreatedDate,
-            LastSpinDate: state.currentUser.LastSpinDate,
-            SpinsToday: state.currentUser.SpinsToday,
-            IsAdmin: state.currentUser.IsAdmin
-        };
-        // This maps our JS object keys to the placeholder Google Form entry IDs
-        const entryMapping = {
-            UserID: ENTRY_IDS.userID,
-            DisplayName: ENTRY_IDS.displayName,
-            Coins: ENTRY_IDS.coins,
-            CreatedDate: ENTRY_IDS.createdDate,
-            LastSpinDate: ENTRY_IDS.lastSpinDate,
-            SpinsToday: ENTRY_IDS.spinsToday,
-            IsAdmin: ENTRY_IDS.isAdmin
-        }
-        saveData(userData, FORM_ACTION_URL, entryMapping);
-    }
-
-    // =================================================================================
-    // GAME LOGIC
-    // =================================================================================
-    
-    function handleSpin() {
-        if (state.currentUser.SpinsToday >= 3) {
-            showModal('No Spins!', "You've used all your free spins for today. You can buy more from the profile page.");
-            return;
-        }
-        if (state.currentUser.hasWonJackpotToday) {
-            showModal('Jackpot Won!', "You've already won the jackpot today! Come back tomorrow for more chances.");
-            return;
-        }
-
-        state.currentUser.SpinsToday++;
-        state.currentUser.LastSpinDate = getTodayDateString();
-        elements.spinBtn.disabled = true;
-
-        const numbers = [
-            Math.floor(Math.random() * 10) + 1,
-            Math.floor(Math.random() * 10) + 1,
-            Math.floor(Math.random() * 10) + 1
+        const planetsData = [
+            { id: 1, name: 'Purple Planet', multiplier: 25, color: '#9b59b6', image: 'https://i.imgur.com/6yU4z1k.png' },
+            { id: 2, name: 'Orange Planet', multiplier: 15, color: '#e67e22', image: 'https://i.imgur.com/N30g2a9.png' },
+            { id: 3, name: 'Red Planet', multiplier: 5, color: '#e74c3c', image: 'https://i.imgur.com/G8s1r9E.png' },
+            { id: 4, name: 'Light Green Planet', multiplier: 5, color: '#2ecc71', image: 'https://i.imgur.com/uR2Z3pW.png' },
+            { id: 5, name: 'Pink Planet', multiplier: 50, color: '#ff7eb9', image: 'https://i.imgur.com/Bv2wFkC.png' },
+            { id: 6, name: 'Green Planet', multiplier: 5, color: '#1abc9c', image: 'https://i.imgur.com/3xV3p8c.png' },
+            { id: 7, name: 'Violet Planet', multiplier: 5, color: '#8e44ad', hot: true, image: 'https://i.imgur.com/tO8zL3P.png' },
+            { id: 8, name: 'Blue Planet', multiplier: 10, color: '#3498db', image: 'https://i.imgur.com/mJz4j7m.png' },
         ];
 
-        // Animate numbers
-        elements.numberBoxes.forEach((box, index) => {
-            box.classList.add('number-box-spin');
-            setTimeout(() => {
-                box.textContent = numbers[index];
-                box.classList.remove('number-box-spin');
-            }, 500);
-        });
+        let balance = 1000;
+        let bonus = 0;
+        let currentBet = 10;
+        let timer = 21;
+        let round = 1725;
+        let gameInProgress = false;
 
-        const sum = numbers.reduce((a, b) => a + b, 0);
+        function setupWheel() {
+            gameWheel.innerHTML = '';
+            const angleStep = 360 / planetsData.length;
+            const radius = gameWheel.offsetWidth / 2 - 40; // a bit of padding
 
-        setTimeout(() => {
-            if (sum >= 25) {
-                const prize = 44;
-                state.currentUser.Coins += prize;
-                state.currentUser.hasWonJackpotToday = true;
-                showModal('JACKPOT! 🎉', `Congratulations! The sum was ${sum}. You won <b>${prize}</b> CS Coins!`);
-                elements.announcementText.textContent = `${state.currentUser.DisplayName} just won the JACKPOT! 🥳`;
-            } else if (sum <= 21) {
-                const prize = Math.floor(Math.random() * 12) + 3; // Random prize between 3 and 14
-                state.currentUser.Coins += prize;
-                showModal('You Won!', `Nice! The sum was ${sum}. You won <b>${prize}</b> CS Coins.`);
-            } else {
-                showModal('So Close!', `Your sum was ${sum}. Better luck next time!`);
+            planetsData.forEach((planet, i) => {
+                const angle = angleStep * i * (Math.PI / 180);
+                const x = radius * Math.cos(angle);
+                const y = radius * Math.sin(angle);
+
+                const planetEl = document.createElement('div');
+                planetEl.classList.add('planet');
+                if (planet.hot) planetEl.classList.add('hot');
+                planetEl.dataset.id = planet.id;
+                planetEl.style.transform = `translate(${x}px, ${y}px)`;
+                
+                planetEl.innerHTML = `
+                    <img src="${planet.image}" alt="${planet.name}" class="planet-img">
+                    win ${planet.multiplier} times
+                `;
+
+                gameWheel.appendChild(planetEl);
+            });
+        }
+        
+        function updateUI() {
+            balanceEl.textContent = balance;
+            bonusEl.textContent = bonus;
+            currentBetEl.textContent = currentBet;
+            roundNumberEl.textContent = round;
+        }
+
+        function runGame() {
+            if (gameInProgress) return;
+            
+            if (balance < currentBet) {
+                alert("Not enough balance to place bet!");
+                return;
             }
+
+            gameInProgress = true;
+            betButton.disabled = true;
+            betButton.textContent = 'Betting...';
+            
+            balance -= currentBet;
             updateUI();
-            saveUserData();
-        }, 600);
-    }
-    
-    function handleBuySpins() {
-        if (state.currentUser.Coins < 10) {
-            showModal('Not Enough Coins', 'You need at least 10 CS Coins to buy more spins.');
-            return;
+
+            const spinDuration = 5000; // 5 seconds spin
+            const winnerIndex = Math.floor(Math.random() * planetsData.length);
+            const winner = planetsData[winnerIndex];
+            
+            // Clear previous winner
+            document.querySelectorAll('.planet.selected').forEach(p => p.classList.remove('selected'));
+            
+            // Simple spin animation placeholder
+            let spinCount = 0;
+            const spinInterval = setInterval(() => {
+                document.querySelectorAll('.planet').forEach(p => p.classList.remove('selected'));
+                const currentPlanet = document.querySelector(`.planet[data-id='${planetsData[spinCount % planetsData.length].id}']`);
+                if(currentPlanet) currentPlanet.classList.add('selected');
+                spinCount++;
+            }, 100);
+
+            setTimeout(() => {
+                clearInterval(spinInterval);
+                document.querySelectorAll('.planet').forEach(p => p.classList.remove('selected'));
+                const winnerEl = document.querySelector(`.planet[data-id='${winner.id}']`);
+                if(winnerEl) winnerEl.classList.add('selected');
+                
+                const winnings = currentBet * winner.multiplier;
+                balance += winnings;
+                bonus += winnings > 0 ? winnings * 0.05 : 0; // 5% of winnings as bonus
+                
+                // Update with a slight delay
+                setTimeout(() => {
+                    alert(`Winner is ${winner.name}! You won ${winnings}!`);
+                    updateUI();
+                    resetGame();
+                }, 1000);
+
+            }, spinDuration);
         }
 
-        state.currentUser.Coins -= 10;
-        state.currentUser.SpinsToday -= 2; // Effectively gives 2 more spins
-        if (state.currentUser.SpinsToday < 0) state.currentUser.SpinsToday = 0;
+        function resetGame() {
+            gameInProgress = false;
+            betButton.disabled = false;
+            betButton.textContent = 'One-Click Bet';
+            round++;
+            roundNumberEl.textContent = round;
+            startTimer();
+        }
 
-        showModal('Spins Purchased!', 'You bought 2 extra spins for 10 coins.');
-        updateUI();
-        saveUserData();
-    }
-
-
-    // =================================================================================
-    // INITIALIZATION & EVENT LISTENERS
-    // =================================================================================
-    
-    async function init() {
-        elements.loadingSpinner.classList.remove('hidden');
-        elements.loginPage.classList.add('hidden');
-
-        await fetchAllUsers();
-
-        elements.loadingSpinner.classList.add('hidden');
+        function startTimer() {
+            timer = 21;
+            timerEl.textContent = timer;
+            const countdown = setInterval(() => {
+                timer--;
+                timerEl.textContent = timer;
+                if (timer <= 0) {
+                    clearInterval(countdown);
+                    timerEl.textContent = 'Go!';
+                    // Automatically run game or wait for bet
+                }
+            }, 1000);
+        }
         
-        const savedUserID = localStorage.getItem('birthdayGameUserID');
-        if (savedUserID && state.allUsers.some(u => u.UserID === savedUserID)) {
-            loginUser(savedUserID);
-        } else {
-            elements.loginPage.classList.remove('hidden');
-        }
-    }
-    
-    // Setup all event listeners
-    function setupEventListeners() {
-        elements.guestLoginBtn.addEventListener('click', handleGuestLogin);
-        elements.usernameLoginBtn.addEventListener('click', () => {
-            const userID = elements.usernameInput.value.trim();
-            if (userID) {
-                loginUser(userID);
-            } else {
-                showModal('Invalid Input', 'Please enter a username or Starmaker ID.');
-            }
-        });
-
-        elements.navBtns.forEach(btn => {
-            btn.addEventListener('click', () => navigateTo(btn.dataset.page));
-        });
-
-        elements.spinBtn.addEventListener('click', handleSpin);
-        elements.buySpinsBtn.addEventListener('click', handleBuySpins);
-
-        // Profile Page Listeners
-        elements.changeNameBtn.addEventListener('click', () => {
-            const newName = elements.changeNameInput.value.trim();
-            if (newName && newName !== state.currentUser.DisplayName) {
-                state.currentUser.DisplayName = newName;
+        // Bet amount controls
+        increaseBetBtn.addEventListener('click', () => {
+            if (!gameInProgress) {
+                currentBet += 10;
                 updateUI();
-                saveUserData();
-                showModal('Success', 'Your name has been updated.');
             }
         });
 
-        elements.csConvertInput.addEventListener('input', () => {
-            const csCoins = Number(elements.csConvertInput.value) || 0;
-            const smCoins = Math.floor(csCoins / 3);
-            elements.smReceiveDisplay.textContent = smCoins;
-            if (smCoins > 44) {
-                elements.rechargeRule.classList.remove('hidden');
-                elements.rechargeBtn.disabled = true;
-            } else {
-                elements.rechargeRule.classList.add('hidden');
-                elements.rechargeBtn.disabled = false;
+        decreaseBetBtn.addEventListener('click', () => {
+            if (!gameInProgress && currentBet > 10) {
+                currentBet -= 10;
+                updateUI();
             }
         });
 
-        elements.rechargeBtn.addEventListener('click', () => {
-             // This would be a separate form submission in a real app
-            showModal('Feature Coming Soon', 'The recharge feature is under development.');
-        });
-        
-        // Admin listener
-        elements.adminGrantSpinsBtn.addEventListener('click', () => {
-            // This would also be a separate form submission
-            showModal('Feature Coming Soon', 'The admin features are under development.');
-        });
-        
-        // Modal listener
-        elements.modalCloseBtn.addEventListener('click', hideModal);
-    }
+        betButton.addEventListener('click', runGame);
 
-    // Start the application
-    document.addEventListener('DOMContentLoaded', () => {
-        setupEventListeners();
-        init();
+        // Initial setup
+        setupWheel();
+        updateUI();
+        startTimer();
+        // Recalculate planet positions on window resize
+        window.addEventListener('resize', setupWheel);
     });
+</script>
 
-    </script>
 </body>
 </html>
-
