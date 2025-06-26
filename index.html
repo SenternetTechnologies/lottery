@@ -3,460 +3,374 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Treasure</title>
+    <title>Birthday Special Game Event</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* --- Basic Setup & Fonts --- */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-
-        :root {
-            --bg-color: #1a0f35;
-            --primary-glow: #ff8c00;
-            --secondary-glow: #e040fb;
-            --text-color: #ffffff;
-            --panel-bg: rgba(45, 25, 80, 0.5);
-        }
-
+        /* General Styling */
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-color);
-            background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 70%),
-                              url('https://www.transparenttextures.com/patterns/stardust.png');
-            color: var(--text-color);
+            background: linear-gradient(135deg, #71b7e6, #9b59b6);
+            color: #333;
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            text-align: center;
         }
 
-        .game-container {
+        /* Main Container */
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 25px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             width: 100%;
-            max-width: 450px;
-            background: linear-gradient(180deg, #3a1c71 0%, #2c1550 100%);
-            border-radius: 20px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-            padding: 15px;
-            box-sizing: border-box;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 500px;
         }
 
-        /* --- Header --- */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        h1 {
+            color: #6c4caf;
             margin-bottom: 20px;
         }
-        .round-info {
-            font-size: 1.1em;
-            font-weight: 600;
-        }
-        .winners-bar {
-            font-size: 0.8em;
-            opacity: 0.8;
-        }
 
-        /* --- Game Wheel --- */
-        .game-wheel-container {
-            position: relative;
-            width: 100%;
-            padding-top: 100%; /* 1:1 Aspect Ratio */
-            margin: 40px 0;
-        }
-
-        .game-wheel {
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            animation: rotate-bg 20s linear infinite;
-            background: url('https://i.imgur.com/uG9A9Q8.png') center/cover; /* Black hole image */
-        }
-        
-        @keyframes rotate-bg {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .planet {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            font-size: 0.7em;
-            font-weight: 600;
-        }
-
-        .planet-img {
-            width: 40px;
-            height: 40px;
-            margin-bottom: 2px;
-        }
-        
-        .planet.selected {
-            transform: scale(1.3);
-            box-shadow: 0 0 25px 5px var(--primary-glow);
-            z-index: 10;
-        }
-        
-        .planet.hot::after {
-            content: 'HOT';
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: red;
+        /* Announcement Bar */
+        .announcement-bar {
+            background-color: #6c4caf;
             color: white;
-            padding: 2px 5px;
-            border-radius: 5px;
-            font-size: 0.8em;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
         }
 
-        /* --- Central Display --- */
-        .central-display {
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            background-color: rgba(0,0,0,0.3);
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border: 3px solid var(--secondary-glow);
-            box-shadow: 0 0 20px var(--secondary-glow) inset, 0 0 20px var(--secondary-glow);
-            text-align: center;
+        /* Form and Game Sections */
+        .section {
+            margin-top: 20px;
         }
 
-        .central-display .timer-label {
-            font-size: 0.9em;
-            opacity: 0.8;
+        #game-section {
+            display: none; /* Hidden by default */
         }
 
-        .central-display .timer {
-            font-size: 2.5em;
-            font-weight: 700;
-            line-height: 1.1;
-            text-shadow: 0 0 10px var(--text-color);
+        /* Input Fields */
+        .input-field {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
         }
 
-        /* --- Controls & Betting --- */
-        .bet-button {
-            width: 100%;
-            padding: 15px;
-            border-radius: 50px;
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, #9b59b6, #71b7e6);
+            color: white;
             border: none;
-            background: linear-gradient(90deg, #ff8c00, #ff5f6d);
-            color: var(--text-color);
-            font-size: 1.4em;
-            font-weight: 700;
+            padding: 12px 25px;
+            border-radius: 8px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(255, 140, 0, 0.4);
-            transition: transform 0.2s, box-shadow 0.2s;
-            text-transform: uppercase;
-            margin-top: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
         }
 
-        .bet-button:disabled {
-            background: #555;
-            box-shadow: none;
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:disabled {
+            background: #ccc;
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Game Display */
+        #number-display {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
         }
 
-        .bet-button:not(:disabled):hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 140, 0, 0.6);
-        }
-
-        .bet-amount-section {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 0.9em;
-        }
-
-        .bet-amount-controls {
+        .number-box {
+            width: 80px;
+            height: 80px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 15px;
-            margin-top: 5px;
+            font-size: 36px;
+            font-weight: 700;
+            color: #333;
+            border: 2px solid #ddd;
+            transition: transform 0.5s ease-out;
         }
 
-        .bet-control-btn {
-            background: var(--panel-bg);
-            border: 1px solid var(--secondary-glow);
-            color: var(--text-color);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.5em;
-            cursor: pointer;
+        /* Game Info */
+        #game-info p {
+            font-size: 18px;
+            margin: 8px 0;
+        }
+        #game-info #coins {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        #game-info #spins-left {
+            color: #c0392b;
+            font-weight: bold;
         }
 
-        #current-bet-amount {
-            font-size: 1.5em;
-            font-weight: 600;
-        }
-        
-        /* --- Account Info --- */
-        .account-info {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
+        /* Message/Status Box */
+        #status-message {
+            margin-top: 15px;
             padding: 10px;
-            background-color: var(--panel-bg);
-            border-radius: 10px;
-        }
-        
-        .info-box {
-            flex: 1;
-            text-align: center;
-        }
-
-        .info-box .label {
-            font-size: 0.8em;
-            opacity: 0.7;
-        }
-        
-        .info-box .value {
-            font-size: 1.2em;
+            border-radius: 8px;
             font-weight: 600;
+            display: none; /* Hidden by default */
         }
-        
-        #account-balance::before, #today-bonus::before, #current-bet-amount::before {
-            content: '💰';
-            margin-right: 5px;
-            font-size: 0.8em;
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .status-info {
+            background-color: #cce5ff;
+            color: #004085;
         }
 
-        /* --- Footer --- */
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            padding: 10px;
-            background: linear-gradient(90deg, #ff8c00, #e040fb);
-            border-radius: 10px;
+        /* Footer */
+        footer {
+            margin-top: 30px;
+            color: #555;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-<div class="game-container">
-    <div class="header">
-        <div class="round-info">Today's <span id="round-number">1725</span> Round</div>
-        <div class="winners-bar">🏆 961 ▶</div>
-    </div>
-
-    <div class="game-wheel-container">
-        <div class="game-wheel">
-            </div>
-        <div class="central-display">
-            <div class="timer-label">Next Round</div>
-            <div class="timer" id="timer">21</div>
+    <div class="container">
+        <!-- Running Announcement Bar -->
+        <div class="announcement-bar">
+            <marquee id="announcement-text">Welcome to the Birthday Special Game Event! Good luck!</marquee>
         </div>
-    </div>
 
-    <button class="bet-button" id="bet-button">One-Click Bet</button>
+        <h1>Birthday Special Game Event</h1>
 
-    <div class="bet-amount-section">
-        <div>Current Bet Amount</div>
-        <div class="bet-amount-controls">
-            <button class="bet-control-btn" id="decrease-bet">-</button>
-            <span id="current-bet-amount">10</span>
-            <button class="bet-control-btn" id="increase-bet">+</button>
+        <!-- Registration Section -->
+        <div id="register-section" class="section">
+            <h2>Join the Game</h2>
+            <form id="register-form">
+                <input type="text" id="name" class="input-field" placeholder="Enter Your Name" required>
+                <button type="submit" id="register-btn" class="btn">Register & Play</button>
+            </form>
         </div>
-    </div>
 
-    <div class="account-info">
-        <div class="info-box">
-            <div class="label">Account Balance</div>
-            <div class="value" id="account-balance">1000</div>
-        </div>
-        <div class="info-box">
-            <div class="label">Today's Bonus</div>
-            <div class="value" id="today-bonus">0</div>
-        </div>
-    </div>
-
-    <div class="footer">
-        The Biggest Winner
-    </div>
-</div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const gameWheel = document.querySelector('.game-wheel');
-        const timerEl = document.getElementById('timer');
-        const betButton = document.getElementById('bet-button');
-        const roundNumberEl = document.getElementById('round-number');
-        const balanceEl = document.getElementById('account-balance');
-        const bonusEl = document.getElementById('today-bonus');
-        const currentBetEl = document.getElementById('current-bet-amount');
-        const increaseBetBtn = document.getElementById('increase-bet');
-        const decreaseBetBtn = document.getElementById('decrease-bet');
-
-        const planetsData = [
-            { id: 1, name: 'Purple Planet', multiplier: 25, color: '#9b59b6', image: 'https://i.imgur.com/6yU4z1k.png' },
-            { id: 2, name: 'Orange Planet', multiplier: 15, color: '#e67e22', image: 'https://i.imgur.com/N30g2a9.png' },
-            { id: 3, name: 'Red Planet', multiplier: 5, color: '#e74c3c', image: 'https://i.imgur.com/G8s1r9E.png' },
-            { id: 4, name: 'Light Green Planet', multiplier: 5, color: '#2ecc71', image: 'https://i.imgur.com/uR2Z3pW.png' },
-            { id: 5, name: 'Pink Planet', multiplier: 50, color: '#ff7eb9', image: 'https://i.imgur.com/Bv2wFkC.png' },
-            { id: 6, name: 'Green Planet', multiplier: 5, color: '#1abc9c', image: 'https://i.imgur.com/3xV3p8c.png' },
-            { id: 7, name: 'Violet Planet', multiplier: 5, color: '#8e44ad', hot: true, image: 'https://i.imgur.com/tO8zL3P.png' },
-            { id: 8, name: 'Blue Planet', multiplier: 10, color: '#3498db', image: 'https://i.imgur.com/mJz4j7m.png' },
-        ];
-
-        let balance = 1000;
-        let bonus = 0;
-        let currentBet = 10;
-        let timer = 21;
-        let round = 1725;
-        let gameInProgress = false;
-
-        function setupWheel() {
-            gameWheel.innerHTML = '';
-            const angleStep = 360 / planetsData.length;
-            const radius = gameWheel.offsetWidth / 2 - 40; // a bit of padding
-
-            planetsData.forEach((planet, i) => {
-                const angle = angleStep * i * (Math.PI / 180);
-                const x = radius * Math.cos(angle);
-                const y = radius * Math.sin(angle);
-
-                const planetEl = document.createElement('div');
-                planetEl.classList.add('planet');
-                if (planet.hot) planetEl.classList.add('hot');
-                planetEl.dataset.id = planet.id;
-                planetEl.style.transform = `translate(${x}px, ${y}px)`;
-                
-                planetEl.innerHTML = `
-                    <img src="${planet.image}" alt="${planet.name}" class="planet-img">
-                    win ${planet.multiplier} times
-                `;
-
-                gameWheel.appendChild(planetEl);
-            });
-        }
-        
-        function updateUI() {
-            balanceEl.textContent = balance;
-            bonusEl.textContent = bonus;
-            currentBetEl.textContent = currentBet;
-            roundNumberEl.textContent = round;
-        }
-
-        function runGame() {
-            if (gameInProgress) return;
+        <!-- Game Section -->
+        <div id="game-section" class="section">
+            <h2 id="welcome-message">Welcome, Player!</h2>
             
-            if (balance < currentBet) {
-                alert("Not enough balance to place bet!");
+            <div id="number-display">
+                <div class="number-box">?</div>
+                <div class="number-box">?</div>
+                <div class="number-box">?</div>
+            </div>
+
+            <div id="game-info">
+                <p>Total Coins: <span id="coins">0</span></p>
+                <p>Spins Left Today: <span id="spins-left">3</span></p>
+            </div>
+            
+            <button id="spin-btn" class="btn">Spin the Numbers!</button>
+        </div>
+
+        <!-- Status Message Box -->
+        <div id="status-message"></div>
+
+        <!-- Footer -->
+        <footer>
+            <p>cansing tamil family created event of lucky birthday give away.</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM Elements
+        const registerSection = document.getElementById('register-section');
+        const gameSection = document.getElementById('game-section');
+        const registerForm = document.getElementById('register-form');
+        const nameInput = document.getElementById('name');
+        const spinBtn = document.getElementById('spin-btn');
+        const numberBoxes = document.querySelectorAll('.number-box');
+        const coinsDisplay = document.getElementById('coins');
+        const spinsLeftDisplay = document.getElementById('spins-left');
+        const welcomeMessage = document.getElementById('welcome-message');
+        const statusMessage = document.getElementById('status-message');
+        const announcementText = document.getElementById('announcement-text');
+
+        // Game State Variables
+        let playerState = null;
+        const LOCAL_STORAGE_KEY = 'birthdayGameState';
+        const REGISTERED_USERS_KEY = 'birthdayGameRegisteredUsers';
+
+        // Helper function to get registered users from localStorage
+        function getRegisteredUsers() {
+            const users = localStorage.getItem(REGISTERED_USERS_KEY);
+            return users ? JSON.parse(users) : [];
+        }
+
+        // On Page Load: Check for existing player data in localStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedState = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+            if (savedState && savedState.name) {
+                playerState = savedState;
+                const today = new Date().toISOString().split('T')[0];
+                if (playerState.lastSpinDate !== today) {
+                    playerState.spinsToday = 0;
+                    playerState.hasWonToday = false;
+                    saveState();
+                }
+                showGameSection();
+            }
+        });
+
+        // Function to show a status message
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-${type}`;
+            statusMessage.style.display = 'block';
+        }
+
+        // Handle Registration Form Submission
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = nameInput.value.trim().toLowerCase(); // Use lowercase for case-insensitive check
+            if (!name) {
+                showStatus('Please enter a valid name.', 'error');
                 return;
             }
 
-            gameInProgress = true;
-            betButton.disabled = true;
-            betButton.textContent = 'Betting...';
-            
-            balance -= currentBet;
-            updateUI();
-
-            const spinDuration = 5000; // 5 seconds spin
-            const winnerIndex = Math.floor(Math.random() * planetsData.length);
-            const winner = planetsData[winnerIndex];
-            
-            // Clear previous winner
-            document.querySelectorAll('.planet.selected').forEach(p => p.classList.remove('selected'));
-            
-            // Simple spin animation placeholder
-            let spinCount = 0;
-            const spinInterval = setInterval(() => {
-                document.querySelectorAll('.planet').forEach(p => p.classList.remove('selected'));
-                const currentPlanet = document.querySelector(`.planet[data-id='${planetsData[spinCount % planetsData.length].id}']`);
-                if(currentPlanet) currentPlanet.classList.add('selected');
-                spinCount++;
-            }, 100);
-
-            setTimeout(() => {
-                clearInterval(spinInterval);
-                document.querySelectorAll('.planet').forEach(p => p.classList.remove('selected'));
-                const winnerEl = document.querySelector(`.planet[data-id='${winner.id}']`);
-                if(winnerEl) winnerEl.classList.add('selected');
-                
-                const winnings = currentBet * winner.multiplier;
-                balance += winnings;
-                bonus += winnings > 0 ? winnings * 0.05 : 0; // 5% of winnings as bonus
-                
-                // Update with a slight delay
-                setTimeout(() => {
-                    alert(`Winner is ${winner.name}! You won ${winnings}!`);
-                    updateUI();
-                    resetGame();
-                }, 1000);
-
-            }, spinDuration);
-        }
-
-        function resetGame() {
-            gameInProgress = false;
-            betButton.disabled = false;
-            betButton.textContent = 'One-Click Bet';
-            round++;
-            roundNumberEl.textContent = round;
-            startTimer();
-        }
-
-        function startTimer() {
-            timer = 21;
-            timerEl.textContent = timer;
-            const countdown = setInterval(() => {
-                timer--;
-                timerEl.textContent = timer;
-                if (timer <= 0) {
-                    clearInterval(countdown);
-                    timerEl.textContent = 'Go!';
-                    // Automatically run game or wait for bet
+            const registeredUsers = getRegisteredUsers();
+            if (registeredUsers.includes(name)) {
+                showStatus('Don\'t create multiple accounts! This name is already registered.', 'error');
+                // As a convenience, load the game for the existing user
+                const savedState = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+                if (savedState && savedState.name.toLowerCase() === name) {
+                     playerState = savedState;
+                     setTimeout(showGameSection, 2000);
                 }
-            }, 1000);
-        }
+                return;
+            }
+
+            // Register the new user
+            registeredUsers.push(name);
+            localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(registeredUsers));
+
+            // Create a new state for the player
+            playerState = {
+                name: nameInput.value.trim(), // Keep original casing for display
+                coins: 0,
+                spinsToday: 0,
+                lastSpinDate: '',
+                hasWonToday: false
+            };
+            saveState();
+
+            showStatus('Registration successful! Welcome.', 'success');
+            setTimeout(showGameSection, 1500);
+        });
+
+        // Handle Spin Button Click
+        spinBtn.addEventListener('click', () => {
+            if (playerState.spinsToday >= 3) {
+                showStatus("You've used all your spins for today!", 'info');
+                return;
+            }
+            if (playerState.hasWonToday) {
+                showStatus("You've already won today! Come back tomorrow.", 'info');
+                return;
+            }
+
+            // Update spin count
+            playerState.spinsToday++;
+            playerState.lastSpinDate = new Date().toISOString().split('T')[0];
+
+            // Generate three random numbers between 1 and 10
+            const numbers = [
+                Math.floor(Math.random() * 10) + 1,
+                Math.floor(Math.random() * 10) + 1,
+                Math.floor(Math.random() * 10) + 1
+            ];
+
+            // Display the numbers with an animation
+            numberBoxes.forEach((box, index) => {
+                box.style.transform = 'rotateX(360deg)';
+                setTimeout(() => {
+                    box.textContent = numbers[index];
+                    box.style.transform = 'none';
+                }, 500);
+            });
+            
+            const sum = numbers.reduce((a, b) => a + b, 0);
+
+            // Check for win condition after animation
+            setTimeout(() => {
+                if (sum >= 25) {
+                    playerState.coins += 40;
+                    playerState.hasWonToday = true;
+                    showStatus(`Congratulations! You won 40 coins! Total sum was ${sum}.`, 'success');
+                    announcementText.textContent = `${playerState.name} just won 40 coins! 🎉`;
+                } else {
+                    showStatus(`So close! Your sum was ${sum}. Spin again!`, 'info');
+                }
+                updateUI();
+                saveState();
+            }, 600);
+        });
         
-        // Bet amount controls
-        increaseBetBtn.addEventListener('click', () => {
-            if (!gameInProgress) {
-                currentBet += 10;
-                updateUI();
+        // Function to show the game section and hide registration
+        function showGameSection() {
+            registerSection.style.display = 'none';
+            statusMessage.style.display = 'none';
+            gameSection.style.display = 'block';
+            welcomeMessage.textContent = `Welcome, ${playerState.name}!`;
+            updateUI();
+        }
+
+        // Function to update the UI with current state
+        function updateUI() {
+            coinsDisplay.textContent = playerState.coins;
+            const spinsRemaining = 3 - playerState.spinsToday;
+            spinsLeftDisplay.textContent = spinsRemaining;
+
+            // Disable button if no spins left or already won
+            if (spinsRemaining <= 0 || playerState.hasWonToday) {
+                spinBtn.disabled = true;
+                if(playerState.hasWonToday){
+                    spinsLeftDisplay.textContent = "You've won!";
+                } else {
+                    spinsLeftDisplay.textContent = "No spins left";
+                }
+            } else {
+                spinBtn.disabled = false;
             }
-        });
+        }
 
-        decreaseBetBtn.addEventListener('click', () => {
-            if (!gameInProgress && currentBet > 10) {
-                currentBet -= 10;
-                updateUI();
-            }
-        });
+        // Function to save the current player state to localStorage
+        function saveState() {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(playerState));
+        }
 
-        betButton.addEventListener('click', runGame);
-
-        // Initial setup
-        setupWheel();
-        updateUI();
-        startTimer();
-        // Recalculate planet positions on window resize
-        window.addEventListener('resize', setupWheel);
-    });
-</script>
-
+    </script>
 </body>
 </html>
