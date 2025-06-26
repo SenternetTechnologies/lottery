@@ -3,374 +3,656 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Birthday Special Game Event</title>
+    <title>Cansing Family - Birthday Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* General Styling */
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #71b7e6, #9b59b6);
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            text-align: center;
         }
-
-        /* Main Container */
-        .container {
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 25px 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 500px;
+        /* Page transition animation */
+        .page {
+            animation: fadeIn 0.5s ease-in-out;
         }
-
-        h1 {
-            color: #6c4caf;
-            margin-bottom: 20px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        /* Announcement Bar */
-        .announcement-bar {
-            background-color: #6c4caf;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        /* Form and Game Sections */
-        .section {
-            margin-top: 20px;
-        }
-
-        #game-section {
-            display: none; /* Hidden by default */
-        }
-
-        /* Input Fields */
-        .input-field {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-        }
-
-        /* Buttons */
-        .btn {
-            background: linear-gradient(135deg, #9b59b6, #71b7e6);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        /* Game Display */
-        #number-display {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 25px 0;
-        }
-
-        .number-box {
-            width: 80px;
-            height: 80px;
-            background-color: #f0f0f0;
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 36px;
-            font-weight: 700;
-            color: #333;
-            border: 2px solid #ddd;
+        /* Number box spin animation */
+        .number-box-spin {
+            transform: rotateX(360deg);
             transition: transform 0.5s ease-out;
         }
-
-        /* Game Info */
-        #game-info p {
-            font-size: 18px;
-            margin: 8px 0;
+        /* Custom gradient for buttons and highlights */
+        .brand-gradient {
+            background: linear-gradient(135deg, #8e2de2, #4a00e0);
         }
-        #game-info #coins {
-            color: #27ae60;
-            font-weight: bold;
+        .brand-gradient-rev {
+            background: linear-gradient(135deg, #4a00e0, #8e2de2);
         }
-        #game-info #spins-left {
-            color: #c0392b;
-            font-weight: bold;
+        /* Modal styles */
+        .modal-backdrop {
+            transition: opacity 0.3s ease;
         }
-
-        /* Message/Status Box */
-        #status-message {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: 600;
-            display: none; /* Hidden by default */
-        }
-        .status-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .status-error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        .status-info {
-            background-color: #cce5ff;
-            color: #004085;
-        }
-
-        /* Footer */
-        footer {
-            margin-top: 30px;
-            color: #555;
-            font-size: 14px;
+        .modal-content {
+            transition: transform 0.3s ease;
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">
 
-    <div class="container">
-        <!-- Running Announcement Bar -->
-        <div class="announcement-bar">
-            <marquee id="announcement-text">Welcome to the Birthday Special Game Event! Good luck!</marquee>
+    <div id="app-container" class="w-full max-w-md mx-auto bg-gray-800 rounded-2xl shadow-2xl shadow-purple-500/20 overflow-hidden">
+        
+        <!-- Loading Spinner -->
+        <div id="loading-spinner" class="hidden p-8 flex flex-col items-center justify-center">
+            <svg class="animate-spin h-10 w-10 text-purple-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="mt-4 text-gray-300">Connecting to Server...</p>
         </div>
 
-        <h1>Birthday Special Game Event</h1>
-
-        <!-- Registration Section -->
-        <div id="register-section" class="section">
-            <h2>Join the Game</h2>
-            <form id="register-form">
-                <input type="text" id="name" class="input-field" placeholder="Enter Your Name" required>
-                <button type="submit" id="register-btn" class="btn">Register & Play</button>
-            </form>
+        <!-- Login Page -->
+        <div id="login-page" class="page p-8 space-y-6">
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-purple-400">Welcome!</h1>
+                <p class="text-gray-400 mt-2">Join the Cansing Birthday Event</p>
+            </div>
+            <div class="space-y-4">
+                <button id="guest-login-btn" class="w-full brand-gradient text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 transition-opacity shadow-lg shadow-purple-500/30">
+                    Cansing Guest Entry (20 Bonus Coins!)
+                </button>
+                 <div class="relative flex py-3 items-center">
+                    <div class="flex-grow border-t border-gray-600"></div>
+                    <span class="flex-shrink mx-4 text-gray-500">Or</span>
+                    <div class="flex-grow border-t border-gray-600"></div>
+                </div>
+                <input type="text" id="username-input" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Enter Username or Starmaker ID">
+                <button id="username-login-btn" class="w-full bg-gray-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-500 transition-colors">Login / Register</button>
+            </div>
         </div>
 
-        <!-- Game Section -->
-        <div id="game-section" class="section">
-            <h2 id="welcome-message">Welcome, Player!</h2>
-            <p><b>If the three numbers Addition value n≤25 your are the winner.</b></p>
-            <div id="number-display">
-                <div class="number-box">?</div>
-                <div class="number-box">?</div>
-                <div class="number-box">?</div>
+        <!-- Main App Interface (post-login) -->
+        <div id="main-app" class="hidden">
+            <!-- Header -->
+            <header class="p-4 bg-gray-900/50 flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-400">Welcome</p>
+                    <h2 id="user-display-name" class="font-bold text-lg"></h2>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-yellow-400">CS Coins</p>
+                    <p id="wallet-coins" class="font-bold text-lg"></p>
+                </div>
+            </header>
+
+            <!-- Game Page -->
+            <div id="game-page" class="page p-6">
+                <div class="announcement-bar bg-purple-500/20 text-purple-300 p-3 rounded-lg mb-6 text-center text-sm">
+                    <marquee id="announcement-text">Try your luck! Win big! Good luck to everyone!</marquee>
+                </div>
+
+                <div class="text-center mb-6">
+                     <p class="text-gray-300">Spin and get a sum of <b>21 or less</b> to win 3-14 coins.</p>
+                     <p class="text-yellow-300 font-bold">Get a sum of <b>25 or more</b> to win the 44 coin JACKPOT!</p>
+                </div>
+
+                <div id="number-display" class="flex justify-center gap-4 my-8">
+                    <div class="number-box w-20 h-20 bg-gray-900 rounded-lg flex items-center justify-center text-4xl font-bold border-2 border-gray-700">?</div>
+                    <div class="number-box w-20 h-20 bg-gray-900 rounded-lg flex items-center justify-center text-4xl font-bold border-2 border-gray-700">?</div>
+                    <div class="number-box w-20 h-20 bg-gray-900 rounded-lg flex items-center justify-center text-4xl font-bold border-2 border-gray-700">?</div>
+                </div>
+
+                <div class="text-center my-6 space-y-2">
+                    <p class="text-gray-300">Spins Left: <span id="spins-left" class="font-bold text-xl text-white"></span></p>
+                </div>
+                
+                <div class="space-y-4">
+                    <button id="spin-btn" class="w-full brand-gradient text-white font-bold py-4 px-4 rounded-lg text-xl hover:opacity-90 transition-opacity shadow-lg shadow-purple-500/40 disabled:opacity-50 disabled:cursor-not-allowed">Spin Now!</button>
+                    <button id="buy-spins-btn" class="w-full bg-teal-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-400 transition-colors">Buy 2 Spins (10 Coins)</button>
+                </div>
             </div>
 
-            <div id="game-info">
-                <p>Total Coins: <span id="coins">0</span></p>
-                <p>Spins Left Today: <span id="spins-left">3</span></p>
+            <!-- Profile Page -->
+            <div id="profile-page" class="page hidden p-6 space-y-6">
+                 <div>
+                    <h3 class="text-xl font-bold text-purple-300 mb-4">My Profile</h3>
+                    <div class="bg-gray-700/50 p-4 rounded-lg space-y-2">
+                        <p><strong>Username:</strong> <span id="profile-username"></span></p>
+                        <p><strong>Member Since:</strong> <span id="profile-created-date"></span></p>
+                    </div>
+                </div>
+
+                 <div>
+                    <h3 class="text-xl font-bold text-purple-300 mb-2">Change Name</h3>
+                    <div class="flex gap-2">
+                        <input type="text" id="change-name-input" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="New display name">
+                        <button id="change-name-btn" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-500 transition-colors">Save</button>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold text-yellow-300 mb-4">CS Coin Wallet</h3>
+                    <div class="bg-gray-700/50 p-4 rounded-lg">
+                        <p class="text-center text-sm mb-1 text-gray-400">Convert CS Coins to Starmaker Coins</p>
+                        <p class="text-center text-xs mb-4 text-gray-500">(3 CS Coins = 1 Starmaker Coin)</p>
+                        <input type="text" id="sm-id-input" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 mb-2 text-white" placeholder="Your Starmaker ID">
+                        <input type="number" id="cs-convert-input" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 mb-2 text-white" placeholder="CS Coins to convert">
+                        <p class="text-center my-2">You will get: <span id="sm-receive-display" class="font-bold text-xl text-green-400">0</span> Starmaker Coins</p>
+                        <p id="recharge-rule" class="text-center text-xs text-red-400 mb-3 hidden">You can only recharge up to 44 Starmaker Coins at a time.</p>
+                        <button id="recharge-btn" class="w-full brand-gradient-rev text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">Submit Recharge</button>
+                    </div>
+                </div>
             </div>
-            
-            <button id="spin-btn" class="btn">Spin the Numbers!</button>
+
+            <!-- Admin Page -->
+            <div id="admin-page" class="page hidden p-6 space-y-6">
+                <h3 class="text-xl font-bold text-red-400">Admin Panel</h3>
+                 <div>
+                    <h4 class="text-lg font-semibold mb-2">Grant Free Spins</h4>
+                    <input type="text" id="admin-target-user-input" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 mb-2 text-white" placeholder="Target Username or ID">
+                    <input type="number" id="admin-spins-input" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 mb-2 text-white" placeholder="Number of Spins to grant">
+                    <button id="admin-grant-spins-btn" class="w-full bg-red-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-500 transition-colors">Grant Spins</button>
+                </div>
+            </div>
+
+            <!-- Navigation Bar -->
+            <nav class="bg-gray-900 grid grid-cols-3 text-center border-t-2 border-purple-500/30">
+                <button data-page="game-page" class="nav-btn p-4 text-purple-400 border-t-2 border-purple-400">Lottery</button>
+                <button data-page="profile-page" class="nav-btn p-4 text-gray-400 border-t-2 border-transparent">Profile</button>
+                <button data-page="admin-page" id="admin-nav-btn" class="nav-btn p-4 text-gray-400 border-t-2 border-transparent hidden">Admin</button>
+            </nav>
         </div>
 
-        <!-- Status Message Box -->
-        <div id="status-message"></div>
-<B>Send this screenshot to Admin Eyekiller to get coins.</B>
-        <!-- Footer -->
-        <footer>
-            <p>cansing tamil family created event of lucky birthday give away.</p>
-        </footer>
     </div>
 
+    <!-- Generic Modal -->
+    <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4 modal-backdrop">
+        <div class="modal-content bg-gray-800 rounded-2xl shadow-lg p-6 w-full max-w-sm text-center transform scale-95">
+            <h3 id="modal-title" class="text-xl font-bold mb-2"></h3>
+            <p id="modal-body" class="text-gray-300 mb-6"></p>
+            <button id="modal-close-btn" class="bg-purple-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-purple-500 transition-colors">OK</button>
+        </div>
+    </div>
+
+
     <script>
-        // DOM Elements
-        const registerSection = document.getElementById('register-section');
-        const gameSection = document.getElementById('game-section');
-        const registerForm = document.getElementById('register-form');
-        const nameInput = document.getElementById('name');
-        const spinBtn = document.getElementById('spin-btn');
-        const numberBoxes = document.querySelectorAll('.number-box');
-        const coinsDisplay = document.getElementById('coins');
-        const spinsLeftDisplay = document.getElementById('spins-left');
-        const welcomeMessage = document.getElementById('welcome-message');
-        const statusMessage = document.getElementById('status-message');
-        const announcementText = document.getElementById('announcement-text');
+    // =================================================================================
+    // CONFIGURATION
+    // =================================================================================
+    const SHEET_ID = '1ysrqo1gApsEL2QsJjvVdbusS0x26oEwzKC0HMzoDoMI';
+    // IMPORTANT: To WRITE data, you must create a Google Form and get its action URL.
+    // Replace 'YOUR_FORM_ACTION_URL' with the real URL from your Google Form.
+    // See the setup guide for instructions.
+    const FORM_ACTION_URL = 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse';
 
-        // Game State Variables
-        let playerState = null;
-        const LOCAL_STORAGE_KEY = 'birthdayGameState';
-        const REGISTERED_USERS_KEY = 'birthdayGameRegisteredUsers';
+    const ENTRY_IDS = {
+        // These MUST match the "entry.xxxx" IDs from your Google Form's pre-filled link
+        userID: 'entry.xxxxxxxxxx',
+        displayName: 'entry.xxxxxxxxxx',
+        coins: 'entry.xxxxxxxxxx',
+        createdDate: 'entry.xxxxxxxxxx',
+        lastSpinDate: 'entry.xxxxxxxxxx',
+        spinsToday: 'entry.xxxxxxxxxx',
+        isAdmin: 'entry.xxxxxxxxxx',
+        // For the other sheets/forms
+        rechargeRequest: 'entry.xxxxxxxxxx', 
+        adminAction: 'entry.xxxxxxxxxx',
+    };
 
-        // Helper function to get registered users from localStorage
-        function getRegisteredUsers() {
-            const users = localStorage.getItem(REGISTERED_USERS_KEY);
-            return users ? JSON.parse(users) : [];
+
+    // =================================================================================
+    // DOM ELEMENTS
+    // =================================================================================
+    const elements = {
+        loadingSpinner: document.getElementById('loading-spinner'),
+        loginPage: document.getElementById('login-page'),
+        mainApp: document.getElementById('main-app'),
+        guestLoginBtn: document.getElementById('guest-login-btn'),
+        usernameInput: document.getElementById('username-input'),
+        usernameLoginBtn: document.getElementById('username-login-btn'),
+        userDisplayName: document.getElementById('user-display-name'),
+        walletCoins: document.getElementById('wallet-coins'),
+        numberBoxes: document.querySelectorAll('.number-box'),
+        spinBtn: document.getElementById('spin-btn'),
+        spinsLeft: document.getElementById('spins-left'),
+        buySpinsBtn: document.getElementById('buy-spins-btn'),
+        navBtns: document.querySelectorAll('.nav-btn'),
+        pages: document.querySelectorAll('.page'),
+        announcementText: document.getElementById('announcement-text'),
+        // Profile Page
+        profileUsername: document.getElementById('profile-username'),
+        profileCreatedDate: document.getElementById('profile-created-date'),
+        changeNameInput: document.getElementById('change-name-input'),
+        changeNameBtn: document.getElementById('change-name-btn'),
+        smIdInput: document.getElementById('sm-id-input'),
+        csConvertInput: document.getElementById('cs-convert-input'),
+        smReceiveDisplay: document.getElementById('sm-receive-display'),
+        rechargeRule: document.getElementById('recharge-rule'),
+        rechargeBtn: document.getElementById('recharge-btn'),
+        // Admin Page
+        adminNavBtn: document.getElementById('admin-nav-btn'),
+        adminTargetUserInput: document.getElementById('admin-target-user-input'),
+        adminSpinsInput: document.getElementById('admin-spins-input'),
+        adminGrantSpinsBtn: document.getElementById('admin-grant-spins-btn'),
+        // Modal
+        modal: document.getElementById('modal'),
+        modalTitle: document.getElementById('modal-title'),
+        modalBody: document.getElementById('modal-body'),
+        modalCloseBtn: document.getElementById('modal-close-btn'),
+    };
+
+    // =================================================================================
+    // APPLICATION STATE
+    // =================================================================================
+    let state = {
+        currentUser: null,
+        allUsers: [],
+        isLoading: true,
+    };
+
+    // =================================================================================
+    // UTILITY & HELPER FUNCTIONS
+    // =================================================================================
+
+    // Show a modal notification
+    function showModal(title, message) {
+        elements.modalTitle.textContent = title;
+        elements.modalBody.innerHTML = message; // Use innerHTML to allow for bold tags etc.
+        elements.modal.classList.remove('hidden');
+        setTimeout(() => {
+            elements.modal.querySelector('.modal-backdrop').classList.remove('opacity-0');
+            elements.modal.querySelector('.modal-content').classList.remove('scale-95');
+        }, 10);
+    }
+
+    // Hide the modal
+    function hideModal() {
+        elements.modal.querySelector('.modal-backdrop').classList.add('opacity-0');
+        elements.modal.querySelector('.modal-content').classList.add('scale-95');
+        setTimeout(() => elements.modal.classList.add('hidden'), 300);
+    }
+    
+    // Parse CSV data from Google Sheets
+    function parseCSV(csvText) {
+        const rows = csvText.trim().split('\n').map(row => row.replace(/"/g, ''));
+        const headers = rows.shift().split(',');
+        return rows.map(row => {
+            const values = row.split(',');
+            return headers.reduce((obj, header, i) => {
+                obj[header.trim()] = values[i] ? values[i].trim() : '';
+                return obj;
+            }, {});
+        });
+    }
+
+    // Get today's date in YYYY-MM-DD format
+    function getTodayDateString() {
+        return new Date().toISOString().split('T')[0];
+    }
+    
+    // =================================================================================
+    // DATA HANDLING (GOOGLE SHEETS)
+    // =================================================================================
+
+    // Fetch all user data from the published Google Sheet
+    async function fetchAllUsers() {
+        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Users`;
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Network response was not ok.');
+            const csvText = await response.text();
+            state.allUsers = parseCSV(csvText);
+            console.log('Users data loaded:', state.allUsers);
+        } catch (error) {
+            console.error('Failed to fetch user data:', error);
+            showModal('Connection Error', 'Could not load data from the server. Please check your connection and try again.');
+        }
+    }
+    
+    // This function simulates writing data. In a real scenario, it would post to a Google Form.
+    // It's crucial to set up the Google Form correctly for this to work.
+    async function saveData(dataObject, formActionUrl, entryMapping) {
+        // THIS IS A CRITICAL PART: Replace 'YOUR_FORM_ACTION_URL' in the config
+        if (formActionUrl.includes('YOUR_FORM_ID')) {
+            console.warn("Writing to sheet is disabled. Please configure FORM_ACTION_URL and ENTRY_IDS in the script.");
+            // For demo purposes, we update the local state. In a real multi-user env, this isn't enough.
+            const userIndex = state.allUsers.findIndex(u => u.UserID === dataObject.UserID);
+            if(userIndex > -1) {
+                state.allUsers[userIndex] = { ...state.allUsers[userIndex], ...dataObject };
+            } else {
+                 state.allUsers.push(dataObject);
+            }
+            state.currentUser = dataObject; // Update current user state
+            updateUI();
+            return;
         }
 
-        // On Page Load: Check for existing player data in localStorage
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedState = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-            if (savedState && savedState.name) {
-                playerState = savedState;
-                const today = new Date().toISOString().split('T')[0];
-                if (playerState.lastSpinDate !== today) {
-                    playerState.spinsToday = 0;
-                    playerState.hasWonToday = false;
-                    saveState();
-                }
-                showGameSection();
+        const formData = new FormData();
+        for (const key in entryMapping) {
+            if (dataObject[key] !== undefined) {
+                formData.append(entryMapping[key], dataObject[key]);
             }
-        });
-
-        // Function to show a status message
-        function showStatus(message, type) {
-            statusMessage.textContent = message;
-            statusMessage.className = `status-${type}`;
-            statusMessage.style.display = 'block';
         }
 
-        // Handle Registration Form Submission
-        registerForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = nameInput.value.trim().toLowerCase(); // Use lowercase for case-insensitive check
-            if (!name) {
-                showStatus('Please enter a valid name.', 'error');
-                return;
-            }
-
-            const registeredUsers = getRegisteredUsers();
-            if (registeredUsers.includes(name)) {
-                showStatus('Don\'t create multiple accounts! This name is already registered.', 'error');
-                // As a convenience, load the game for the existing user
-                const savedState = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-                if (savedState && savedState.name.toLowerCase() === name) {
-                     playerState = savedState;
-                     setTimeout(showGameSection, 2000);
-                }
-                return;
-            }
-
-            // Register the new user
-            registeredUsers.push(name);
-            localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(registeredUsers));
-
-            // Create a new state for the player
-            playerState = {
-                name: nameInput.value.trim(), // Keep original casing for display
-                coins: 0,
-                spinsToday: 0,
-                lastSpinDate: '',
-                hasWonToday: false
-            };
-            saveState();
-
-            showStatus('Registration successful! Welcome.', 'success');
-            setTimeout(showGameSection, 1500);
-        });
-
-        // Handle Spin Button Click
-        spinBtn.addEventListener('click', () => {
-            if (playerState.spinsToday >= 3) {
-                showStatus("You've used all your spins for today!", 'info');
-                return;
-            }
-            if (playerState.hasWonToday) {
-                showStatus("You've already won today! Come back tomorrow.", 'info');
-                return;
-            }
-
-            // Update spin count
-            playerState.spinsToday++;
-            playerState.lastSpinDate = new Date().toISOString().split('T')[0];
-
-            // Generate three random numbers between 1 and 10
-            const numbers = [
-                Math.floor(Math.random() * 10) + 1,
-                Math.floor(Math.random() * 10) + 1,
-                Math.floor(Math.random() * 10) + 1
-            ];
-
-            // Display the numbers with an animation
-            numberBoxes.forEach((box, index) => {
-                box.style.transform = 'rotateX(360deg)';
-                setTimeout(() => {
-                    box.textContent = numbers[index];
-                    box.style.transform = 'none';
-                }, 500);
+        try {
+            await fetch(formActionUrl, {
+                method: 'POST',
+                mode: 'no-cors', // Important for Google Forms
+                body: formData,
             });
-            
-            const sum = numbers.reduce((a, b) => a + b, 0);
+            console.log('Data submitted successfully.');
+            // Refetch data to confirm the write was successful
+             await fetchAllUsers();
+             state.currentUser = state.allUsers.find(u => u.UserID === dataObject.UserID);
+             updateUI();
 
-            // Check for win condition after animation
+        } catch (error) {
+            console.error('Failed to submit data:', error);
+            showModal('Save Error', 'Could not save your progress. Please try again.');
+        }
+    }
+
+
+    // =================================================================================
+    // UI & PAGE MANAGEMENT
+    // =================================================================================
+
+    // Update the entire UI based on the current state
+    function updateUI() {
+        if (!state.currentUser) return;
+        
+        // Header
+        elements.userDisplayName.textContent = state.currentUser.DisplayName;
+        elements.walletCoins.textContent = state.currentUser.Coins;
+
+        // Game Page
+        const spinsRemaining = 3 - state.currentUser.SpinsToday;
+        elements.spinsLeft.textContent = spinsRemaining > 0 ? spinsRemaining : '0';
+        elements.spinBtn.disabled = spinsRemaining <= 0 || state.currentUser.hasWonJackpotToday;
+
+        // Profile Page
+        elements.profileUsername.textContent = state.currentUser.UserID;
+        elements.profileCreatedDate.textContent = new Date(state.currentUser.CreatedDate).toLocaleDateString();
+        elements.changeNameInput.value = state.currentUser.DisplayName;
+
+        // Admin Nav
+        if (String(state.currentUser.IsAdmin).toUpperCase() === 'TRUE') {
+            elements.adminNavBtn.classList.remove('hidden');
+        } else {
+            elements.adminNavBtn.classList.add('hidden');
+        }
+    }
+    
+    // Switch between pages
+    function navigateTo(pageId) {
+        elements.pages.forEach(page => {
+            page.classList.add('hidden');
+        });
+        document.getElementById(pageId).classList.remove('hidden');
+
+        elements.navBtns.forEach(btn => {
+            if (btn.dataset.page === pageId) {
+                btn.classList.add('text-purple-400', 'border-purple-400');
+                btn.classList.remove('text-gray-400', 'border-transparent');
+            } else {
+                btn.classList.add('text-gray-400', 'border-transparent');
+                btn.classList.remove('text-purple-400', 'border-purple-400');
+            }
+        });
+    }
+
+
+    // =================================================================================
+    // USER & AUTHENTICATION LOGIC
+    // =================================================================================
+    
+    function loginUser(userID) {
+        let user = state.allUsers.find(u => u.UserID.toLowerCase() === userID.toLowerCase());
+        
+        if (user) {
+            // Existing user
+            state.currentUser = { ...user, Coins: Number(user.Coins), SpinsToday: Number(user.SpinsToday) };
+            // Reset daily spins if it's a new day
+            if (state.currentUser.LastSpinDate !== getTodayDateString()) {
+                state.currentUser.SpinsToday = 0;
+                state.currentUser.hasWonJackpotToday = false;
+            }
+        } else {
+            // New user registration
+            state.currentUser = {
+                UserID: userID,
+                DisplayName: userID,
+                Coins: 0,
+                CreatedDate: new Date().toISOString(),
+                LastSpinDate: '',
+                SpinsToday: 0,
+                IsAdmin: 'FALSE',
+                hasWonJackpotToday: false
+            };
+            showModal('Welcome!', `You've been registered as <b>${userID}</b>.`);
+            saveUserData(); // Save the new user to the sheet
+        }
+        
+        localStorage.setItem('birthdayGameUserID', state.currentUser.UserID);
+        elements.loginPage.classList.add('hidden');
+        elements.mainApp.classList.remove('hidden');
+        updateUI();
+        navigateTo('game-page');
+    }
+
+    function handleGuestLogin() {
+        const guestID = `CS${Math.floor(1000 + Math.random() * 9000)}`;
+        let user = state.allUsers.find(u => u.UserID.toLowerCase() === guestID.toLowerCase());
+
+        // If guestID already exists (unlikely but possible), generate a new one
+        while(user) {
+            guestID = `CS${Math.floor(1000 + Math.random() * 9000)}`;
+            user = state.allUsers.find(u => u.UserID.toLowerCase() === guestID.toLowerCase());
+        }
+
+        // Create new guest user with bonus coins
+        state.currentUser = {
+            UserID: guestID,
+            DisplayName: guestID,
+            Coins: 20, // Welcome bonus
+            CreatedDate: new Date().toISOString(),
+            LastSpinDate: '',
+            SpinsToday: 0,
+            IsAdmin: 'FALSE',
+            hasWonJackpotToday: false
+        };
+        
+        saveUserData(); // Save the new guest user
+        
+        localStorage.setItem('birthdayGameUserID', state.currentUser.UserID);
+        showModal('Welcome Guest!', `You are logged in as <b>${guestID}</b> and received 20 bonus coins!`);
+        elements.loginPage.classList.add('hidden');
+        elements.mainApp.classList.remove('hidden');
+        updateUI();
+        navigateTo('game-page');
+    }
+
+    function saveUserData() {
+        const userData = {
+            UserID: state.currentUser.UserID,
+            DisplayName: state.currentUser.DisplayName,
+            Coins: state.currentUser.Coins,
+            CreatedDate: state.currentUser.CreatedDate,
+            LastSpinDate: state.currentUser.LastSpinDate,
+            SpinsToday: state.currentUser.SpinsToday,
+            IsAdmin: state.currentUser.IsAdmin
+        };
+        // This maps our JS object keys to the placeholder Google Form entry IDs
+        const entryMapping = {
+            UserID: ENTRY_IDS.userID,
+            DisplayName: ENTRY_IDS.displayName,
+            Coins: ENTRY_IDS.coins,
+            CreatedDate: ENTRY_IDS.createdDate,
+            LastSpinDate: ENTRY_IDS.lastSpinDate,
+            SpinsToday: ENTRY_IDS.spinsToday,
+            IsAdmin: ENTRY_IDS.isAdmin
+        }
+        saveData(userData, FORM_ACTION_URL, entryMapping);
+    }
+
+    // =================================================================================
+    // GAME LOGIC
+    // =================================================================================
+    
+    function handleSpin() {
+        if (state.currentUser.SpinsToday >= 3) {
+            showModal('No Spins!', "You've used all your free spins for today. You can buy more from the profile page.");
+            return;
+        }
+        if (state.currentUser.hasWonJackpotToday) {
+            showModal('Jackpot Won!', "You've already won the jackpot today! Come back tomorrow for more chances.");
+            return;
+        }
+
+        state.currentUser.SpinsToday++;
+        state.currentUser.LastSpinDate = getTodayDateString();
+        elements.spinBtn.disabled = true;
+
+        const numbers = [
+            Math.floor(Math.random() * 10) + 1,
+            Math.floor(Math.random() * 10) + 1,
+            Math.floor(Math.random() * 10) + 1
+        ];
+
+        // Animate numbers
+        elements.numberBoxes.forEach((box, index) => {
+            box.classList.add('number-box-spin');
             setTimeout(() => {
-                if (sum >= 25) {
-                    playerState.coins += 44;
-                    playerState.hasWonToday = true;
-                    showStatus(`Congratulations! You won 44 coins! Total sum was ${sum}.`, 'success');
-                    announcementText.textContent = `${playerState.name} just won 40 coins! 🎉`;
-                } else {
-                    showStatus(`So close! Your sum was ${sum}. Spin again!`, 'info');
-                }
+                box.textContent = numbers[index];
+                box.classList.remove('number-box-spin');
+            }, 500);
+        });
+
+        const sum = numbers.reduce((a, b) => a + b, 0);
+
+        setTimeout(() => {
+            if (sum >= 25) {
+                const prize = 44;
+                state.currentUser.Coins += prize;
+                state.currentUser.hasWonJackpotToday = true;
+                showModal('JACKPOT! 🎉', `Congratulations! The sum was ${sum}. You won <b>${prize}</b> CS Coins!`);
+                elements.announcementText.textContent = `${state.currentUser.DisplayName} just won the JACKPOT! 🥳`;
+            } else if (sum <= 21) {
+                const prize = Math.floor(Math.random() * 12) + 3; // Random prize between 3 and 14
+                state.currentUser.Coins += prize;
+                showModal('You Won!', `Nice! The sum was ${sum}. You won <b>${prize}</b> CS Coins.`);
+            } else {
+                showModal('So Close!', `Your sum was ${sum}. Better luck next time!`);
+            }
+            updateUI();
+            saveUserData();
+        }, 600);
+    }
+    
+    function handleBuySpins() {
+        if (state.currentUser.Coins < 10) {
+            showModal('Not Enough Coins', 'You need at least 10 CS Coins to buy more spins.');
+            return;
+        }
+
+        state.currentUser.Coins -= 10;
+        state.currentUser.SpinsToday -= 2; // Effectively gives 2 more spins
+        if (state.currentUser.SpinsToday < 0) state.currentUser.SpinsToday = 0;
+
+        showModal('Spins Purchased!', 'You bought 2 extra spins for 10 coins.');
+        updateUI();
+        saveUserData();
+    }
+
+
+    // =================================================================================
+    // INITIALIZATION & EVENT LISTENERS
+    // =================================================================================
+    
+    async function init() {
+        elements.loadingSpinner.classList.remove('hidden');
+        elements.loginPage.classList.add('hidden');
+
+        await fetchAllUsers();
+
+        elements.loadingSpinner.classList.add('hidden');
+        
+        const savedUserID = localStorage.getItem('birthdayGameUserID');
+        if (savedUserID && state.allUsers.some(u => u.UserID === savedUserID)) {
+            loginUser(savedUserID);
+        } else {
+            elements.loginPage.classList.remove('hidden');
+        }
+    }
+    
+    // Setup all event listeners
+    function setupEventListeners() {
+        elements.guestLoginBtn.addEventListener('click', handleGuestLogin);
+        elements.usernameLoginBtn.addEventListener('click', () => {
+            const userID = elements.usernameInput.value.trim();
+            if (userID) {
+                loginUser(userID);
+            } else {
+                showModal('Invalid Input', 'Please enter a username or Starmaker ID.');
+            }
+        });
+
+        elements.navBtns.forEach(btn => {
+            btn.addEventListener('click', () => navigateTo(btn.dataset.page));
+        });
+
+        elements.spinBtn.addEventListener('click', handleSpin);
+        elements.buySpinsBtn.addEventListener('click', handleBuySpins);
+
+        // Profile Page Listeners
+        elements.changeNameBtn.addEventListener('click', () => {
+            const newName = elements.changeNameInput.value.trim();
+            if (newName && newName !== state.currentUser.DisplayName) {
+                state.currentUser.DisplayName = newName;
                 updateUI();
-                saveState();
-            }, 600);
+                saveUserData();
+                showModal('Success', 'Your name has been updated.');
+            }
+        });
+
+        elements.csConvertInput.addEventListener('input', () => {
+            const csCoins = Number(elements.csConvertInput.value) || 0;
+            const smCoins = Math.floor(csCoins / 3);
+            elements.smReceiveDisplay.textContent = smCoins;
+            if (smCoins > 44) {
+                elements.rechargeRule.classList.remove('hidden');
+                elements.rechargeBtn.disabled = true;
+            } else {
+                elements.rechargeRule.classList.add('hidden');
+                elements.rechargeBtn.disabled = false;
+            }
+        });
+
+        elements.rechargeBtn.addEventListener('click', () => {
+             // This would be a separate form submission in a real app
+            showModal('Feature Coming Soon', 'The recharge feature is under development.');
         });
         
-        // Function to show the game section and hide registration
-        function showGameSection() {
-            registerSection.style.display = 'none';
-            statusMessage.style.display = 'none';
-            gameSection.style.display = 'block';
-            welcomeMessage.textContent = `Welcome, ${playerState.name}!`;
-            updateUI();
-        }
+        // Admin listener
+        elements.adminGrantSpinsBtn.addEventListener('click', () => {
+            // This would also be a separate form submission
+            showModal('Feature Coming Soon', 'The admin features are under development.');
+        });
+        
+        // Modal listener
+        elements.modalCloseBtn.addEventListener('click', hideModal);
+    }
 
-        // Function to update the UI with current state
-        function updateUI() {
-            coinsDisplay.textContent = playerState.coins;
-            const spinsRemaining = 3 - playerState.spinsToday;
-            spinsLeftDisplay.textContent = spinsRemaining;
-
-            // Disable button if no spins left or already won
-            if (spinsRemaining <= 0 || playerState.hasWonToday) {
-                spinBtn.disabled = true;
-                if(playerState.hasWonToday){
-                    spinsLeftDisplay.textContent = "You've won!";
-                } else {
-                    spinsLeftDisplay.textContent = "No spins left";
-                }
-            } else {
-                spinBtn.disabled = false;
-            }
-        }
-
-        // Function to save the current player state to localStorage
-        function saveState() {
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(playerState));
-        }
+    // Start the application
+    document.addEventListener('DOMContentLoaded', () => {
+        setupEventListeners();
+        init();
+    });
 
     </script>
 </body>
 </html>
+
