@@ -3,374 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Birthday Special Game Event</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Emergency Announcement: Cansing Birthday Lottery Event</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
-        /* General Styling */
+        :root {
+            --primary-color: #e74c3c; /* Red for emergency */
+            --secondary-color: #f1c40f; /* Yellow for attention */
+            --background-color: #2c3e50; /* Dark blue/grey */
+            --text-color: #ecf0f1; /* Light grey */
+            --accent-color: #2ecc71; /* Green for success */
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #71b7e6, #9b59b6);
-            color: #333;
-            margin: 0;
-            padding: 20px;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
             text-align: center;
+            position: relative;
         }
 
-        /* Main Container */
         .container {
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 25px 30px;
+            background-color: rgba(44, 62, 80, 0.95); /* Slightly transparent background */
+            padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 500px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            max-width: 700px;
+            width: 90%;
+            animation: fadeIn 1.5s ease-out;
+            border: 3px solid var(--primary-color);
+            position: relative;
+            z-index: 10;
+            overflow: hidden; /* To contain border pulse animation */
+        }
+
+        /* Border pulse animation */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 5px solid transparent;
+            border-radius: 20px;
+            animation: borderPulse 2s infinite alternate;
+            z-index: -1;
+        }
+
+        @keyframes borderPulse {
+            0% { border-color: var(--primary-color); }
+            100% { border-color: var(--secondary-color); }
         }
 
         h1 {
-            color: #6c4caf;
+            font-family: 'Press Start 2P', cursive;
+            color: var(--primary-color);
+            font-size: 2.5em;
             margin-bottom: 20px;
+            text-shadow: 0 0 10px var(--primary-color);
+            animation: flicker 1s infinite alternate;
         }
 
-        /* Announcement Bar */
-        .announcement-bar {
-            background-color: #6c4caf;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
             margin-bottom: 20px;
-            font-weight: 600;
+            animation: slideIn 1.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
         }
 
-        /* Form and Game Sections */
-        .section {
-            margin-top: 20px;
-        }
+        p:nth-of-type(1) { animation-delay: 0.5s; }
+        p:nth-of-type(2) { animation-delay: 1s; }
+        p:nth-of-type(3) { animation-delay: 1.5s; }
 
-        #game-section {
-            display: none; /* Hidden by default */
-        }
-
-        /* Input Fields */
-        .input-field {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-        }
-
-        /* Buttons */
-        .btn {
-            background: linear-gradient(135deg, #9b59b6, #71b7e6);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        /* Game Display */
-        #number-display {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 25px 0;
-        }
-
-        .number-box {
-            width: 80px;
-            height: 80px;
-            background-color: #f0f0f0;
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 36px;
-            font-weight: 700;
-            color: #333;
-            border: 2px solid #ddd;
-            transition: transform 0.5s ease-out;
-        }
-
-        /* Game Info */
-        #game-info p {
-            font-size: 18px;
-            margin: 8px 0;
-        }
-        #game-info #coins {
-            color: #27ae60;
-            font-weight: bold;
-        }
-        #game-info #spins-left {
-            color: #c0392b;
+        .highlight {
+            color: var(--secondary-color);
             font-weight: bold;
         }
 
-        /* Message/Status Box */
-        #status-message {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: 600;
-            display: none; /* Hidden by default */
-        }
-        .status-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .status-error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        .status-info {
-            background-color: #cce5ff;
-            color: #004085;
+        .success-check {
+            color: var(--accent-color);
+            font-size: 1.5em;
+            font-weight: bold;
         }
 
-        /* Footer */
-        footer {
+        .call-to-action {
             margin-top: 30px;
-            color: #555;
-            font-size: 14px;
+        }
+
+        .website-link {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: var(--background-color);
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.3em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: bounceIn 1.5s ease-out forwards;
+            opacity: 0;
+            animation-delay: 2s;
+        }
+
+        .website-link:hover {
+            background-color: #27ae60;
+            transform: translateY(-3px);
+        }
+
+        /* Background animated dots */
+        .background-dots {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .dot {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            animation: moveDot 20s infinite linear;
+        }
+
+        @keyframes moveDot {
+            0% { transform: translate(0, 0); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)); opacity: 0; }
+        }
+
+        /* Keyframe animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.3); }
+            50% { opacity: 1; transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
 <body>
+    <div class="background-dots"></div>
 
     <div class="container">
-        <!-- Running Announcement Bar -->
-        <div class="announcement-bar">
-            <marquee id="announcement-text">Welcome to the Birthday Special Game Event! Good luck!</marquee>
+        <h1>EMERGENCY ANNOUNCEMENT</h1>
+        ---
+        <p>Our recent <span class="highlight">Cansing Birthday Lottery Event</span> has concluded.</p>
+        <p>Due to an unforeseen technical issue where <span class="highlight">user logins and spins were not stored on our database</span>, generating accurate coin rewards became problematic. </p>
+        <p>Therefore, our team has manually selected one user, and their reward has been successfully sent <span class="success-check">✅</span>.</p>
+        <p><strong>Guys, please wait for our next event!</strong></p>
+        ---
+        <div class="call-to-action">
+            <p>For more details, please check our Website:</p>
+            <a href="https://senternettechnologies.github.io/senternet.in/" class="website-link" target="_blank" rel="noopener noreferrer">Visit Our Website</a>
         </div>
-
-        <h1>Birthday Special Game Event</h1>
-
-        <!-- Registration Section -->
-        <div id="register-section" class="section">
-            <h2>Join the Game</h2>
-            <form id="register-form">
-                <input type="text" id="name" class="input-field" placeholder="Enter Your Name" required>
-                <button type="submit" id="register-btn" class="btn">Register & Play</button>
-            </form>
-        </div>
-
-        <!-- Game Section -->
-        <div id="game-section" class="section">
-            <h2 id="welcome-message">Welcome, Player!</h2>
-            
-            <div id="number-display">
-                <div class="number-box">?</div>
-                <div class="number-box">?</div>
-                <div class="number-box">?</div>
-            </div>
-
-            <div id="game-info">
-                <p>Total Coins: <span id="coins">0</span></p>
-                <p>Spins Left Today: <span id="spins-left">3</span></p>
-            </div>
-            
-            <button id="spin-btn" class="btn">Spin the Numbers!</button>
-        </div>
-
-        <!-- Status Message Box -->
-        <div id="status-message"></div>
-
-        <!-- Footer -->
-        <footer>
-            <p>cansing tamil family created event of lucky birthday give away.</p>
-        </footer>
     </div>
 
     <script>
-        // DOM Elements
-        const registerSection = document.getElementById('register-section');
-        const gameSection = document.getElementById('game-section');
-        const registerForm = document.getElementById('register-form');
-        const nameInput = document.getElementById('name');
-        const spinBtn = document.getElementById('spin-btn');
-        const numberBoxes = document.querySelectorAll('.number-box');
-        const coinsDisplay = document.getElementById('coins');
-        const spinsLeftDisplay = document.getElementById('spins-left');
-        const welcomeMessage = document.getElementById('welcome-message');
-        const statusMessage = document.getElementById('status-message');
-        const announcementText = document.getElementById('announcement-text');
+        // JavaScript for dynamic background dots
+        const numDots = 30;
+        const dotsContainer = document.querySelector('.background-dots');
 
-        // Game State Variables
-        let playerState = null;
-        const LOCAL_STORAGE_KEY = 'birthdayGameState';
-        const REGISTERED_USERS_KEY = 'birthdayGameRegisteredUsers';
-
-        // Helper function to get registered users from localStorage
-        function getRegisteredUsers() {
-            const users = localStorage.getItem(REGISTERED_USERS_KEY);
-            return users ? JSON.parse(users) : [];
+        for (let i = 0; i < numDots; i++) {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            const size = Math.random() * 10 + 5 + 'px'; // Random size between 5px and 15px
+            dot.style.width = size;
+            dot.style.height = size;
+            dot.style.left = Math.random() * 100 + '%';
+            dot.style.top = Math.random() * 100 + '%';
+            dot.style.animationDelay = Math.random() * -20 + 's'; // Start at different times
+            dot.style.setProperty('--x', (Math.random() - 0.5) * 200 + '%'); // Random end X position
+            dot.style.setProperty('--y', (Math.random() - 0.5) * 200 + '%'); // Random end Y position
+            dotsContainer.appendChild(dot);
         }
-
-        // On Page Load: Check for existing player data in localStorage
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedState = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-            if (savedState && savedState.name) {
-                playerState = savedState;
-                const today = new Date().toISOString().split('T')[0];
-                if (playerState.lastSpinDate !== today) {
-                    playerState.spinsToday = 0;
-                    playerState.hasWonToday = false;
-                    saveState();
-                }
-                showGameSection();
-            }
-        });
-
-        // Function to show a status message
-        function showStatus(message, type) {
-            statusMessage.textContent = message;
-            statusMessage.className = `status-${type}`;
-            statusMessage.style.display = 'block';
-        }
-
-        // Handle Registration Form Submission
-        registerForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = nameInput.value.trim().toLowerCase(); // Use lowercase for case-insensitive check
-            if (!name) {
-                showStatus('Please enter a valid name.', 'error');
-                return;
-            }
-
-            const registeredUsers = getRegisteredUsers();
-            if (registeredUsers.includes(name)) {
-                showStatus('Don\'t create multiple accounts! This name is already registered.', 'error');
-                // As a convenience, load the game for the existing user
-                const savedState = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-                if (savedState && savedState.name.toLowerCase() === name) {
-                     playerState = savedState;
-                     setTimeout(showGameSection, 2000);
-                }
-                return;
-            }
-
-            // Register the new user
-            registeredUsers.push(name);
-            localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(registeredUsers));
-
-            // Create a new state for the player
-            playerState = {
-                name: nameInput.value.trim(), // Keep original casing for display
-                coins: 0,
-                spinsToday: 0,
-                lastSpinDate: '',
-                hasWonToday: false
-            };
-            saveState();
-
-            showStatus('Registration successful! Welcome.', 'success');
-            setTimeout(showGameSection, 1500);
-        });
-
-        // Handle Spin Button Click
-        spinBtn.addEventListener('click', () => {
-            if (playerState.spinsToday >= 3) {
-                showStatus("You've used all your spins for today!", 'info');
-                return;
-            }
-            if (playerState.hasWonToday) {
-                showStatus("You've already won today! Come back tomorrow.", 'info');
-                return;
-            }
-
-            // Update spin count
-            playerState.spinsToday++;
-            playerState.lastSpinDate = new Date().toISOString().split('T')[0];
-
-            // Generate three random numbers between 1 and 10
-            const numbers = [
-                Math.floor(Math.random() * 10) + 1,
-                Math.floor(Math.random() * 10) + 1,
-                Math.floor(Math.random() * 10) + 1
-            ];
-
-            // Display the numbers with an animation
-            numberBoxes.forEach((box, index) => {
-                box.style.transform = 'rotateX(360deg)';
-                setTimeout(() => {
-                    box.textContent = numbers[index];
-                    box.style.transform = 'none';
-                }, 500);
-            });
-            
-            const sum = numbers.reduce((a, b) => a + b, 0);
-
-            // Check for win condition after animation
-            setTimeout(() => {
-                if (sum >= 25) {
-                    playerState.coins += 40;
-                    playerState.hasWonToday = true;
-                    showStatus(`Congratulations! You won 40 coins! Total sum was ${sum}.`, 'success');
-                    announcementText.textContent = `${playerState.name} just won 40 coins! 🎉`;
-                } else {
-                    showStatus(`So close! Your sum was ${sum}. Spin again!`, 'info');
-                }
-                updateUI();
-                saveState();
-            }, 600);
-        });
-        
-        // Function to show the game section and hide registration
-        function showGameSection() {
-            registerSection.style.display = 'none';
-            statusMessage.style.display = 'none';
-            gameSection.style.display = 'block';
-            welcomeMessage.textContent = `Welcome, ${playerState.name}!`;
-            updateUI();
-        }
-
-        // Function to update the UI with current state
-        function updateUI() {
-            coinsDisplay.textContent = playerState.coins;
-            const spinsRemaining = 3 - playerState.spinsToday;
-            spinsLeftDisplay.textContent = spinsRemaining;
-
-            // Disable button if no spins left or already won
-            if (spinsRemaining <= 0 || playerState.hasWonToday) {
-                spinBtn.disabled = true;
-                if(playerState.hasWonToday){
-                    spinsLeftDisplay.textContent = "You've won!";
-                } else {
-                    spinsLeftDisplay.textContent = "No spins left";
-                }
-            } else {
-                spinBtn.disabled = false;
-            }
-        }
-
-        // Function to save the current player state to localStorage
-        function saveState() {
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(playerState));
-        }
-
     </script>
 </body>
 </html>
