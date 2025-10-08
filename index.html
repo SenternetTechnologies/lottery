@@ -1,95 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Star Collector challenge | </title>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden; /* Prevent scrollbars on the body */
-      font-family: 'Inter', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh; /* Ensure it takes full viewport height */
-      background-color: #f0f2f5; /* Match app background */
-    }
-
-    /* Splash Screen Styling */
-    #splashScreen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #8b5cf6; /* Purple background for splash */
-      color: white;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-size: 3em;
-      font-weight: bold;
-      z-index: 1000; /* Ensure it's on top */
-      transition: opacity 1s ease-out; /* Smooth fade out */
-    }
-
-    #splashScreen.hidden {
-      opacity: 0;
-      pointer-events: none; /* Make it unclickable when hidden */
-    }
-
-    /* Iframe Styling */
-    #luckyUsersIframe {
-      width: 100%;
-      height: 100vh; /* Take full viewport height */
-      border: none; /* Remove default iframe border */
-      display: none; /* Hidden initially */
-      overflow: hidden; /* Crucial for preventing scrollbars inside iframe if content is larger */
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cansing Star Collector Challenge Event</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Basic styles for a full-screen, no-scroll layout */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: sans-serif;
+        }
+        #app-wrapper, #iframe-container {
+            height: 100%;
+            width: 100%;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        /* Utility class to hide elements */
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-gray-900 text-white">
 
-  <!-- Splash Screen -->
-  <div id="splashScreen">
-    Cansing Star Collecter
-<marquee> Copy your id & send to admin SID</marquee>
-    <div style="font-size: 0.5em; margin-top: 10px;">Loading...</div>
-  </div>
+    <!-- Intro Screen -->
+    <div id="intro-screen" class="flex flex-col items-center justify-center h-full w-full p-4">
+        <div class="text-center">
+            <h1 class="text-4xl md:text-6xl font-bold text-yellow-300 mb-4">Cansing Star</h1>
+            <h2 class="text-2xl md:text-4xl font-semibold mb-8">Challenge Event</h2>
+            <p class="text-gray-400 mb-8 max-w-md">Click the stars, collect points,use tools and rise to the top of the leaderboard!</p>
+            <button id="enter-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full text-xl transition duration-300 transform hover:scale-105">
+                Enter Challenge
+            </button>
+        </div>
+    </div>
 
-  <!-- Iframe for the Lucky Users App -->
-  <iframe id="luckyUsersIframe" src="https://script.google.com/macros/s/AKfycbxkD-YtoaEgjmh2ld-Idrj1quRRRksRo4mDPSHoxDxmv3tGW20G4Hc_JyGcI62cjuL-eA/exec"></iframe>
+    <!-- Main App Wrapper (contains the iframe and the popup) -->
+    <div id="app-wrapper" class="hidden relative">
+        <!-- Iframe Container -->
+        <div id="iframe-container">
+            <iframe src="https://script.google.com/macros/s/AKfycbxkD-YtoaEgjmh2ld-Idrj1quRRRksRo4mDPSHoxDxmv3tGW20G4Hc_JyGcI62cjuL-eA/exec"></iframe>
+        </div>
 
-  <script>
-    const splashScreen = document.getElementById('splashScreen');
-    const luckyUsersIframe = document.getElementById('luckyUsersIframe');
+        <!-- Popup Ad Overlay -->
+        <div id="popup-overlay" class="hidden absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4">
+            <div class="bg-gray-800 rounded-2xl p-6 md:p-8 max-w-sm w-full text-center border-2 border-indigo-500 shadow-lg animate-fade-in">
+                <h3 class="text-2xl font-bold mb-4 text-yellow-300">Important Notice!</h3>
+                <p class="text-gray-300 mb-6">
+                    To participate in the event rankings, please copy your unique <strong>Game ID</strong> from the game screen and send it to the event admin.
+                </p>
+                <button id="close-popup-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg w-full">
+                    I Understand
+                </button>
+            </div>
+        </div>
+    </div>
 
-    // Function to hide splash screen and show iframe
-    function showApp() {
-      splashScreen.classList.add('hidden'); // Start fading out splash screen
-      luckyUsersIframe.style.display = 'block'; // Show the iframe
+    <script>
+        const introScreen = document.getElementById('intro-screen');
+        const appWrapper = document.getElementById('app-wrapper');
+        const enterBtn = document.getElementById('enter-btn');
+        const popupOverlay = document.getElementById('popup-overlay');
+        const closePopupBtn = document.getElementById('close-popup-btn');
 
-      // Optional: Remove splash screen from DOM after transition to free up resources
-      setTimeout(() => {
-        splashScreen.remove();
-      }, 1000); // Match CSS transition duration
-    }
+        // Event listener for the "Enter" button
+        enterBtn.addEventListener('click', () => {
+            // Hide the intro screen
+            introScreen.classList.add('hidden');
+            
+            // Show the main app wrapper (which contains the iframe)
+            appWrapper.classList.remove('hidden');
 
-    // Wait for the iframe content to load
-    luckyUsersIframe.onload = function() {
-      // You can add a small delay here if you want the splash screen to show longer
-      // or if the app inside the iframe needs a moment to fully render.
-      setTimeout(showApp, 1500); // Show splash for at least 1.5 seconds after iframe loads
-    };
+            // Show the informational popup
+            popupOverlay.style.display = 'flex';
+        });
 
-    // Fallback: If iframe doesn't trigger onload for some reason,
-    // show the app after a fixed delay (e.g., 5 seconds total)
-    setTimeout(() => {
-      if (splashScreen.style.opacity !== '0') { // Only if splash is still visible
-        showApp();
-      }
-    }, 5000); // Max 5 seconds for splash screen
-  </script>
+        // Event listener for the popup's "close" button
+        closePopupBtn.addEventListener('click', () => {
+            // Hide the popup
+            popupOverlay.classList.add('hidden');
+        });
+    </script>
 
 </body>
 </html>
