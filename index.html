@@ -12,7 +12,7 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            font-family: sans-serif;
+            font-family: 'Inter', sans-serif;
         }
         #app-wrapper, #iframe-container {
             height: 100%;
@@ -23,12 +23,17 @@
             height: 100%;
             border: none;
         }
-        /* Utility class to hide elements */
         .hidden {
             display: none;
         }
 
-         /* Animation for fade-in effect */
+        /* Countdown specific styles */
+        .countdown-digit {
+            text-shadow: 0 0 10px rgba(79, 70, 229, 0.7); /* Neon glow effect */
+            background: rgba(30, 41, 59, 0.6);
+        }
+
+        /* Animation for fade-in effect */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -43,27 +48,130 @@
         #intro-content::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 10px; }
         #intro-content::-webkit-scrollbar-thumb:hover { background: #6366f1; }
         
+        /* --- Space Object Animations --- */
+
+        /* Animation Keyframes: Moves objects from right to left */
+        @keyframes fly {
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100vw); }
+        }
+
+        /* Base class for all flying objects */
+        .flying-object {
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0.9;
+            pointer-events: none; /* Allows clicks to pass through to the content */
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+        }
+
+        /* Specific Object Styles and Animations */
+        .rocket {
+            width: 80px;
+            animation: fly 20s linear infinite;
+            top: 10%;
+            left: 0;
+            animation-delay: 0s;
+        }
+
+        .alien-ship {
+            width: 60px;
+            animation: fly 15s linear infinite reverse; /* Reverse direction for variety */
+            top: 50%;
+            left: 0;
+            animation-delay: 5s;
+        }
+
+        .planet {
+            width: 100px;
+            animation: fly 30s linear infinite;
+            top: 70%;
+            left: 0;
+            animation-delay: 10s;
+        }
+        
+        .spacecraft-2 {
+            width: 70px;
+            animation: fly 18s linear infinite;
+            top: 30%;
+            left: 0;
+            animation-delay: 8s;
+        }
+
     </style>
 </head>
 <body class="bg-gray-900 text-white">
 
     <!-- Intro Screen -->
     <div id="intro-screen" class="flex flex-col h-full w-full bg-gray-900 bg-opacity-80 backdrop-blur-sm">
+        
+        <!-- Space Header / Image Replacement -->
+        <header class="relative h-64 md:h-80 w-full bg-black overflow-hidden rounded-b-xl shadow-2xl">
+            <!-- Background (Static Star Field SVG for a thematic look) -->
+            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100%" height="100%" fill="#030712"/>
+                <!-- Simple star pattern -->
+                <circle cx="10" cy="15" r="0.2" fill="white" opacity="0.8"/>
+                <circle cx="85" cy="5" r="0.3" fill="white" opacity="0.6"/>
+                <circle cx="50" cy="70" r="0.1" fill="white" opacity="0.7"/>
+                <circle cx="30" cy="90" r="0.4" fill="white" opacity="0.9"/>
+                <circle cx="65" cy="40" r="0.25" fill="white" opacity="0.5"/>
+                <circle cx="15" cy="45" r="0.35" fill="white" opacity="1"/>
+            </svg>
+
+            <!-- Flying Objects (using user-provided PNG links for the effect) -->
+            <img class="flying-object rocket" src="https://img.icons8.com/?size=100&id=oJkdOVVlUbKe&format=png&color=FFFFFF" alt="Flying Rocket"/>
+            <img class="flying-object alien-ship" src="https://img.icons8.com/?size=100&id=kMocqRi8Xp8K&format=png&color=8B5CF6" alt="Alien Spaceship"/>
+            <img class="flying-object planet" src="https://img.icons8.com/?size=100&id=62040&format=png&color=FB923C" alt="Distant Planet"/>
+            <img class="flying-object spacecraft-2" src="https://img.icons8.com/?size=100&id=oqrxoYQucToV&format=png&color=4ADE80" alt="Spacecraft"/>
+
+            <!-- Main Content Overlay -->
+            <div class="absolute inset-0 flex flex-col justify-center items-center p-4 bg-black bg-opacity-30">
+                <h1 class="text-4xl md:text-6xl font-extrabold mb-4 text-yellow-300 drop-shadow-lg text-center">
+                    Star Collector Challenge
+                </h1>
+                <p class="text-xl md:text-2xl text-indigo-400 font-semibold mb-2">Event Ends In (UTC Time):</p>
+
+                <!-- Countdown Timer Display -->
+                <div id="countdown-timer" class="flex space-x-2 sm:space-x-4 text-white font-mono text-3xl md:text-5xl">
+                    <div class="flex flex-col items-center">
+                        <span id="days" class="countdown-digit p-2 rounded-lg">00</span>
+                        <span class="text-xs md:text-sm text-gray-400 mt-1">DAYS</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <span id="hours" class="countdown-digit p-2 rounded-lg">00</span>
+                        <span class="text-xs md:text-sm text-gray-400 mt-1">HOURS</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <span id="minutes" class="countdown-digit p-2 rounded-lg">00</span>
+                        <span class="text-xs md:text-sm text-gray-400 mt-1">MINS</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <span id="seconds" class="countdown-digit p-2 rounded-lg">00</span>
+                        <span class="text-xs md:text-sm text-gray-400 mt-1">SECS</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
         <!-- Scrollable Content -->
         <div id="intro-content" class="flex-grow overflow-y-auto p-6 md:p-8">
             <div class="max-w-3xl mx-auto">
-                <!-- Header -->
-               <img src="star.jpeg" style="height:100%; width:100%;"></img>
-
+                
                 <!-- Contact Section -->
-                <section class="animate-fade-in" style="animation-delay: 0.8s;">
+                <section class="animate-fade-in mt-6" style="animation-delay: 0.8s;">
                     <h3 class="flex items-center text-xl font-bold mb-4 text-gray-100">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 000-4H7a6 6 0 00-6 6v7a2 2 0 002 2h4l4 4v-4h2a2 2 0 002-2V10a2 2 0 00-2-2h-2" /></svg>
                         Admin Contact
                     </h3>
-                    <div class="text-center bg-gray-800 p-4 rounded-lg">
-                        <p class="text-gray-300">For any questions or to submit your ID, please contact:</p>
-                        <p class="font-bold text-indigo-400 mt-2 text-lg">🔥𓆩🅲🆂𓆪🔥🖤🄴ує༗🄺أℓℓєr𓅋𝆺𝅥𒁍 / Room id: 179698 / SID: 13358325610</p>
+                    <div class="text-center bg-gray-800 p-4 rounded-xl border border-indigo-700">
+                        <p class="text-gray-300 mb-2">For any questions or to submit your ID, please contact:</p>
+                        <p class="font-bold text-indigo-400 mt-2 text-lg break-all">🔥𓆩🅲🆂𓆪🔥🖤🄴ує༗🄺أℓℓєr𓅋𝆺𝅥𒁍</p>
+                        <div class="flex justify-center flex-wrap gap-x-4 gap-y-2 mt-2 text-sm">
+                             <span class="bg-indigo-900 px-3 py-1 rounded-full">Room ID: 179698</span>
+                             <span class="bg-indigo-900 px-3 py-1 rounded-full">SID: 13358325610</span>
+                        </div>
                     </div>
                 </section>
                 <div class="h-24"></div> <!-- Spacer to ensure content can scroll above fixed button -->
@@ -71,8 +179,8 @@
         </div>
 
         <!-- Fixed Footer with Enter Button -->
-        <div class="w-full p-4 bg-gray-900 bg-opacity-50 backdrop-blur-md border-t border-gray-700">
-            <button id="enter-btn" class="w-full max-w-md mx-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-8 rounded-full text-xl transition duration-300 transform hover:scale-105 flex items-center justify-center">
+        <div class="w-full p-4 bg-gray-900 bg-opacity-70 backdrop-blur-md border-t border-gray-700">
+            <button id="enter-btn" class="w-full max-w-md mx-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-8 rounded-full text-xl transition duration-300 transform hover:scale-105 flex items-center justify-center shadow-lg shadow-indigo-500/50">
                 Enter Challenge Catch Stars
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
             </button>
@@ -91,7 +199,38 @@
         const appWrapper = document.getElementById('app-wrapper');
         const enterBtn = document.getElementById('enter-btn');
 
-        // Event listener for the "Enter" button
+        // --- Countdown Logic ---
+        const eventDate = new Date('October 20, 2025 12:00:00 GMT+0000').getTime(); // October 20th, 12:00 PM UTC
+
+        const updateCountdown = () => {
+            const now = new Date().getTime();
+            const distance = eventDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Function to pad single digits with a leading zero
+            const pad = (n) => String(n).padStart(2, '0');
+
+            if (distance < 0) {
+                clearInterval(countdownInterval);
+                document.getElementById('countdown-timer').innerHTML = '<span class="text-red-500 text-4xl font-bold">EVENT CONCLUDED!</span>';
+                return;
+            }
+
+            document.getElementById('days').textContent = pad(days);
+            document.getElementById('hours').textContent = pad(hours);
+            document.getElementById('minutes').textContent = pad(minutes);
+            document.getElementById('seconds').textContent = pad(seconds);
+        };
+
+        // Run the function immediately and then every second
+        updateCountdown();
+        const countdownInterval = setInterval(updateCountdown, 1000);
+
+        // --- Entry Button Logic ---
         enterBtn.addEventListener('click', () => {
             // Add a class to start the fade-out animation
             introScreen.style.transition = 'opacity 0.5s ease-out';
@@ -102,6 +241,10 @@
                 introScreen.classList.add('hidden');
                 // Show the main app wrapper
                 appWrapper.classList.remove('hidden');
+                // Clear the countdown interval when leaving the intro screen
+                clearInterval(countdownInterval);
             }, 500); // 500ms matches the transition duration
         });
-    </script></body></html>
+    </script>
+</body>
+</html>
